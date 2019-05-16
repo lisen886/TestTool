@@ -1,19 +1,28 @@
 {% extends "baseNavbar.html" %}
 {% block title %}Test Tool | excel2xml{% endblock %}
 {% block page_content %}
-
-    <form id="form1" method="post" action="/upload" enctype="multipart/form-data">
-    <div>
-        <input id="File1" type="file" name="myfile"/>
-        <input type="submit">提交</input>
-    </div>
+<form enctype="multipart/form-data">
+　　<input id="file-1" name="file" type="file" multiple class="file" data-overwrite-initial="false" data-min-file-count="1"/>
 </form>
-    <button type="button"><a href="/download/1558004562.png" download="test.png">下载</a></button>
-
+<button type="button" ><a href="/download/1558004562.png" download="test.png">下载</a></button>
 {% endblock %}
-
-
 {% block scripts %}
 {{ super() }}
-<script type="text/javascript" src="../../static/js/my-script.js"></script>
+<link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.2/css/fileinput.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdn.bootcss.com/bootstrap-fileinput/4.3.1/js/fileinput_locale_zh.js"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.2/js/fileinput.js"></script>
+<script>
+    $("#file-1").fileinput({
+    language: 'zh',//设置语言
+　　uploadUrl: '/upload',
+　　allowedFileExtensions : ['jpg', 'png','gif','txt','zip','ico','jpeg','js','css','java','mp3','mp4','doc','docx'],//允许的文件类型
+　　overwriteInitial: false,
+　　maxFileSize: 15000,//文件的最大大小 单位是k
+　　maxFilesNum: 10,//最多文件数量
+　　// allowedFileTypes: ['image', 'video', 'flash'],
+　　slugCallback: function(filename) {
+　　　　return filename;
+　　}
+});
+</script>
 {% endblock %}

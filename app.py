@@ -133,15 +133,13 @@ def api_upload():
     file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)
-    f = request.files['myfile']  # 从表单的file字段获取文件，myfile为该表单的name值
+    f = request.files['file']  # 从表单的file字段获取文件，myfile为该表单的name值
     if f and allowed_file(f.filename):  # 判断是否是允许上传的文件类型
         fname = secure_filename(f.filename)
         ext = fname.rsplit('.', 1)[1]  # 获取文件后缀
         unix_time = int(time.time())
         new_filename = str(unix_time) + '.' + ext  # 修改了上传的文件名
         f.save(os.path.join(file_dir, new_filename))  # 保存文件到upload目录
-
-
         return jsonify({"errno": 0, "errmsg": "上传成功"})
     else:
         return jsonify({"errno": 1001, "errmsg": "上传失败"})
