@@ -1,7 +1,8 @@
-from flask import render_template,send_from_directory,Flask,request,jsonify
+from flask import render_template,send_from_directory,Flask,request,jsonify,Response
 from flask_bootstrap import Bootstrap
 import os
 from script.lib import *
+from script.countTestPlan import *
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 root_cwd = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +30,7 @@ def showHome():
 
 
 @app.route("/users",methods=['GET','POST'])
-def show():
+def showUser():
     values = getValue()
     return render_template("showDir/users.html",value=values)
 
@@ -71,5 +72,47 @@ def updateUser():
     else:
         return jsonify({'status': 400, 'message': 'error'})
 
+@app.route("/excel2xml",methods=['GET','POST'])
+def showExcel2xml():
+    return render_template("showDir/excel2xml.html")
+
+@app.route("/getTestProgress",methods=['GET','POST'])
+def showGetTestProgress():
+    projectNames = get_projectName()
+    return render_template("showDir/testProgress.html",names=projectNames)
+
+def Response_headers(content):
+    resp = Response(content)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+@app.route('/getTestPlan',methods=['POST','GET'])
+def getTestPlan():
+    project = request.form.get('testProject')
+    testPlans = get_project_testPlanName(project)
+    dataList = []
+    for testPlan in testPlans:
+        dataList.append({"name":testPlan})
+    datas = {
+        "data": dataList
+    }
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
+
+@app.route('/getProcessChart',methods=['POST','GET'])
+def getProcessChart():
+    testPlan = request.form.get('testPlan')
+    testproject = request.form.get('testproject')
+    projectID = get_projectID(testproject)
+    progress = get_testplan_progress(projectID,testPlan)
+    dataList = []
+    dataList.append({"name": testPlan, "rate": progress})
+    datas = {
+        "data": dataList
+    }
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)

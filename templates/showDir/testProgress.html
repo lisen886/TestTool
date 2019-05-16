@@ -1,0 +1,128 @@
+{% extends "baseNavbar.html" %}
+{% block title %}Test Tool | Progress{% endblock %}
+{% block page_content %}
+<div class="page-header">
+    <div class="form-horizontal">
+        <div class="control-label col-lg-0"></div>
+        <div class="col-lg-3">
+            <select class="form-control" onchange="selectProject(this)" id="select-testproject">
+                <option>Please select a test project</option>
+                {% for i in names %}
+                    <option>{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-lg-3" style="display: none;" id="test2">
+            <select class="form-control" id="select-testplan" onchange="selectTestPlan(this)">
+            </select>
+        </div>
+    </div>
+</div>
+    <br><br>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 600px;height:400px;display: none;"></div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+    <script type="text/javascript" src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://echarts.baidu.com/dist/echarts.js"></script>
+    <script type="text/javascript">
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main'));
+
+            // 指定图表的配置项和数据
+            var option = {
+            toolbox: { //可视化的工具箱
+                show: true,
+                feature: {
+                    restore: { //重置
+                        show: true
+                    },
+                    saveAsImage: {//保存图片
+                        show: true
+                    }
+                }
+            },
+            tooltip: { //弹窗组件
+                formatter: "{a} <br/>{b} : {c}%"
+            },
+            series: [{
+                type: 'gauge',
+                detail: {formatter:'{value}%'},
+                data: [{value: 0, name: '完成率'}]
+            }]
+
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+
+            myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+
+            function genSelectTestPlan(arr) {
+                var str = "<option>Please select a test plan</option>";
+                for (var i = 0, len = arr.length; i < len; i++) {
+                    str += "<option>"+arr[i].name+"</option>";
+                    if (arr[i].list)
+                        str += genSelectTestPlan(arr[i].list);
+                }
+                return str;
+            }
+
+            function selectProject(obj){
+                {#var names=[];#}
+                var value = obj.options[obj.selectedIndex].value;
+                $.ajax({
+                    url:'/getTestPlan',
+                    type:'post',
+                    dataType: 'json',
+                    data:{testProject:value},
+                    error:function(){
+                        alert('出现错误！');
+                    },success:function (result){
+                        if (result) {
+                            {#for(var i=0;i<result["data"].length;i++){#}
+                            {#    names.push(result["data"][i]["name"]);#}
+                            {#    }#}
+                            document.getElementById("select-testplan").innerHTML=genSelectTestPlan(result.data);
+                             }
+                    }
+                });
+                document.getElementById("test2").style.display="";
+            }
+
+            function selectTestPlan(obj){
+                var value = obj.options[obj.selectedIndex].value;
+                var testproject = document.getElementById("select-testproject").value;
+                 $.ajax({
+                     type : "post",
+                     url : "/getProcessChart",    //请求发送到Servlet处
+                     dataType : "json",        //返回数据形式为json
+                     data:{testPlan:value,testproject:testproject},
+                     error:function(){
+                            alert('图表请求数据失败!');
+                            myChart.hideLoading();
+                        },success:function (result){
+                            if (result) {
+                                testName = result["data"][0]["name"];
+                                process = result["data"][0]["rate"];
+                                myChart.hideLoading();    //隐藏加载动画
+                                myChart.setOption({        //加载数据图表
+                                    title: {
+                                        text: testName,
+                                    },
+                                    series: [{
+                                        type: 'gauge',
+                                        detail: {formatter:'{value}%'},
+                                        data: [{value: process, name: '完成率'}]
+                                    }]
+                                })
+                                 }
+                        }
+                 });
+                document.getElementById("main").style.display="";
+            }
+
+
+        </script>
+{% endblock %}
