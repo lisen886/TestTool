@@ -1,7 +1,15 @@
 {% extends "baseNavbar.html" %}
-{% block title %}Test Tool | Users{% endblock %}
+{% block title %}Test Tool | excel2xml{% endblock %}
 {% block page_content %}
-    <p>TODO</p>
+
+    <form id="form1" method="post" action="/upload" enctype="multipart/form-data">
+    <div>
+        <input id="File1" type="file" name="myfile"/>
+        <input type="submit">提交</input>
+    </div>
+</form>
+    <button type="button"><a href="/download/1558004562.png" download="test.png">下载</a></button>
+
 {% endblock %}
 
 
