@@ -1,28 +1,124 @@
 {% extends "baseNavbar.html" %}
 {% block title %}Test Tool | excel2xml{% endblock %}
 {% block page_content %}
-<form enctype="multipart/form-data">
-　　<input id="file-1" name="file" type="file" multiple class="file" data-overwrite-initial="false" data-min-file-count="1"/>
-</form>
-<button type="button" ><a href="/download/1558004562.png" download="test.png">下载</a></button>
+{#<form enctype="multipart/form-data">#}
+{#　　<input id="file-1" name="file" multiple type="file" data-overwrite-initial="false" data-min-file-count="1"/>#}
+{#</form>#}
+
+   <div class="container-fluid">
+    <form id="form" action="upload/insert" method="post" enctype="multipart/form-data">
+         <div class="row form-group">
+            <label class="col-md-8">请选择将要上传的Excel文件:</label>
+            <label class="col-md-4">
+                <button type="button" class="btn btn-link"><a href="/download/ExcelTemplate.xlsx">下载Excel用例模板</a></button>
+                <button type="button" class="btn btn-link"><a href="https://lisen886.github.io/Good-name-you-remember-me/#/cn/usage?id=excel2xml">Excel用例模板编写向导</a></button>
+            </label>
+            <div class="col-sm-12">
+                <input id="file-1" name="file" multiple type="file" data-show-caption="true">
+            </div>
+        </div>
+    </form>
+</div>
+
+    <div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						新生成的xml文件:
+					</h3>
+				</div>
+				<div class="panel-body">
+					<table class="table table-bordered table-hover table-condensed" id="download-xml">
+                        <tr>
+                            <th class="active" style="width: 60%">xml</th>
+                            <th class="active" style="width: 40%" >download</th>
+                        </tr>
+                    </table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						历史生成的xml文件:&nbsp;&nbsp;<a href="javascript:location.reload();"><span class="glyphicon glyphicon-refresh"></span></a>
+					</h3>
+				</div>
+				<div class="panel-body">
+					<table class="table table-bordered table-hover table-condensed">
+        <tr>
+            <th class="active" style="width: 60%">xml</th>
+            <th class="active" style="width: 40%">download</th>
+        </tr>
+        {% for i in files %}
+            <tr>
+                <td class="success" style="width: 60%">{{ i }}</td>
+                <td class="success" style="width: 40%">
+                    <a class="tooltip-show" data-toggle="tooltip" title="下载xml文件" href="/download/{{ i }}"><span class="glyphicon glyphicon-download-alt"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a class="tooltip-show" data-toggle="tooltip" title="删除源xlsx&xml文件" href="/deleteFile/{{ i }}"><span class="glyphicon glyphicon-trash"></span></a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
 {% endblock %}
 {% block scripts %}
 {{ super() }}
 <link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.2/css/fileinput.css" rel="stylesheet">
-<script type="text/javascript" src="https://cdn.bootcss.com/bootstrap-fileinput/4.3.1/js/fileinput_locale_zh.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-fileinput/4.3.0/js/fileinput_locale_zh.js"></script>
 <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.2/js/fileinput.js"></script>
 <script>
-    $("#file-1").fileinput({
-    language: 'zh',//设置语言
-　　uploadUrl: '/upload',
-　　allowedFileExtensions : ['jpg', 'png','gif','txt','zip','ico','jpeg','js','css','java','mp3','mp4','doc','docx'],//允许的文件类型
-　　overwriteInitial: false,
-　　maxFileSize: 15000,//文件的最大大小 单位是k
-　　maxFilesNum: 10,//最多文件数量
-　　// allowedFileTypes: ['image', 'video', 'flash'],
-　　slugCallback: function(filename) {
-　　　　return filename;
-　　}
-});
+    $(function () {
+        initFileInput("file-1");
+    });
+
+    function initFileInput(ctrlName) {
+        var control = $('#' + ctrlName);
+        control.fileinput({
+            language: 'zh', //设置语言
+            uploadUrl: "/upload", //上传的地址
+            allowedFileExtensions: ['xlsx','jpg', 'gif', 'png'],//接收的文件后缀
+            uploadAsync: true, //默认异步上传
+            showUpload: true, //是否显示上传按钮
+            showRemove : true, //显示移除按钮
+            showPreview : true, //是否显示预览
+            showCaption: false,//是否显示标题
+            browseClass: "btn btn-primary", //按钮样式
+            enctype: 'multipart/form-data',
+            validateInitialCount:true,
+            previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+            msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+
+        }).on('filepreupload', function() {     //上传中
+            console.log('文件正在上传');
+        }).on("fileuploaded", function (event, data) {    //一个文件上传成功
+            console.log(data);
+            console.log('文件上传成功！'+data.response.msg);
+            {#location.reload();#}
+            var t = document.getElementById("download-xml");
+            var tr = document.createElement("tr");
+            var td1 = document.createElement("td");
+            td1.innerHTML = data.response.msg;
+            tr.appendChild(td1);
+            var tdDownloadLink = document.createElement("td");
+            tdDownloadLink.innerHTML = "<a class=\"tooltip-show\" data-toggle=\"tooltip\" title=\"下载xml文件\" href=\"/download/"+data.response.msg+"\"><span class=\"glyphicon glyphicon-download-alt\"></span></a>";
+            tr.appendChild(tdDownloadLink);
+            t.appendChild(tr);
+        }).on('fileerror', function(event, data) {  //一个文件上传失败
+            console.log('文件上传失败！'+data.response.msg);
+
+
+        })
+    }
+
 </script>
 {% endblock %}

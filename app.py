@@ -1,13 +1,19 @@
 from flask import render_template,send_from_directory,Flask,request,jsonify,Response,abort,session
 from werkzeug.utils import secure_filename
 from flask_bootstrap import Bootstrap
-import os,time,base64
+import os,time,base64,urllib.parse,platform
 from script.lib import *
 from script.countTestPlan import *
+from script.excel2xml import *
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 root_cwd = os.path.dirname(os.path.abspath(__file__))
-
+UPLOAD_FOLDER = 'upload'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+basedir = os.path.abspath(os.path.dirname(__file__))
+ALLOWED_EXTENSIONS = set(['txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF'])
+file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+print(file_dir)
 @app.route("/")
 def login():
     return render_template("login.html")
@@ -75,7 +81,8 @@ def updateUser():
 
 @app.route("/excel2xml",methods=['GET','POST'])
 def showExcel2xml():
-    return render_template("showDir/excel2xml.html")
+    xmls = get__xmlfile(file_dir)
+    return render_template("showDir/excel2xml.html",files =xmls)
 
 @app.route("/getTestProgress",methods=['GET','POST'])
 def showGetTestProgress():
@@ -116,13 +123,6 @@ def getProcessChart():
     resp = Response_headers(content)
     return resp
 
-
-UPLOAD_FOLDER = 'upload'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-basedir = os.path.abspath(os.path.dirname(__file__))
-ALLOWED_EXTENSIONS = set(['txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF'])
-
-
 # 用于判断文件后缀
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -130,26 +130,59 @@ def allowed_file(filename):
 # 上传文件
 @app.route('/upload', methods=['POST'], strict_slashes=False)
 def api_upload():
-    file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)
     f = request.files['file']  # 从表单的file字段获取文件，myfile为该表单的name值
-    if f and allowed_file(f.filename):  # 判断是否是允许上传的文件类型
-        fname = secure_filename(f.filename)
-        ext = fname.rsplit('.', 1)[1]  # 获取文件后缀
-        unix_time = int(time.time())
-        new_filename = str(unix_time) + '.' + ext  # 修改了上传的文件名
-        f.save(os.path.join(file_dir, new_filename))  # 保存文件到upload目录
-        return jsonify({"errno": 0, "errmsg": "上传成功"})
+    fileName = "".join(f.filename.split())
+    if f and allowed_file(fileName):  # 判断是否是允许上传的文件类型
+        # fname = secure_filename(f.filename)  # 获取安全的文件名，中文解决：https://blog.csdn.net/weixin_33725126/article/details/88268067
+        # ext = fname.rsplit('.', 1)[1]  # 获取文件后缀
+        # unix_time = int(time.time())
+        # new_filename = str(unix_time) + '.' + ext  # 修改了上传的文件名
+        file = os.path.join(file_dir, fileName)
+        f.save(file)  # 保存文件到upload目录
+        generate_xml(file)
+        xml_file_name = fileName.split(".")[0]+".xml"
+        datas = {"status": 200, "msg": xml_file_name}
     else:
-        return jsonify({"errno": 1001, "errmsg": "上传失败"})
+        datas = {"status": 501, "msg": fileName}
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
 
 @app.route('/download/<filename>', methods=['GET','POST'], strict_slashes=False)
 def download(filename):
-    print(filename)
-    # if request.method=="GET":
-    #     if os.path.isfile(os.path.join('upload', filename)):
-    #         return send_from_directory('upload',filename.encode('utf-8').decode('utf-8'), as_attachment=True)
-    #     abort(404)
+    if request.method=="GET":
+        file = secure_filename(filename)
+        if file == "ExcelTemplate.xlsx":
+            if os.path.isfile(os.path.join('script', file)):
+                return send_from_directory('script',file.encode('utf-8').decode('utf-8'), as_attachment=True)
+            abort(404)
+        else:
+            if os.path.isfile(os.path.join('upload', file)):
+                return send_from_directory('upload',file.encode('utf-8').decode('utf-8'), as_attachment=True)
+            abort(404)
+
+@app.route('/deleteFile/<filename>', methods=['GET','POST'], strict_slashes=False)
+def deleteFile(filename):
+    if request.method=="GET":
+        file = secure_filename(filename)
+        if os.path.isfile(os.path.join('upload', file)):
+            filefirstname = os.path.join(file_dir, file).split(".")[0]
+            print("要删除的文件：%s"% filefirstname)
+            sysstr = platform.system()
+            if (sysstr == "Windows"):
+                cmd = "del "+filefirstname+".*"
+            else:
+                cmd = "rm "+filefirstname+".*"
+            try:
+                os.system(cmd)
+                datas = {"status": 200, "msg": "源文件删除成功"}
+            except:
+                datas = {"status": 401, "msg": "源文件删除失败"}
+            content = json.dumps(datas)
+            resp = Response_headers(content)
+            return resp
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)
