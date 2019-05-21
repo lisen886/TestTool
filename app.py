@@ -1,11 +1,12 @@
-from flask import render_template,send_from_directory,Flask,request,jsonify,Response,abort,session
+from flask import render_template,send_from_directory,Flask,request,jsonify,Response,abort,session,redirect,url_for
 from werkzeug.utils import secure_filename
 from flask_bootstrap import Bootstrap
-import os,time,base64,urllib.parse,platform
+import platform
 from script.lib import *
 from script.countTestPlan import *
 from script.excel2xml import *
 app = Flask(__name__)
+app.secret_key="asdada1231"
 bootstrap = Bootstrap(app)
 root_cwd = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = 'upload'
@@ -13,28 +14,48 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 basedir = os.path.abspath(os.path.dirname(__file__))
 ALLOWED_EXTENSIONS = set(['txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF'])
 file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
-print(file_dir)
-@app.route("/")
-def login():
-    return render_template("login.html")
+@app.before_request
+def before_request():
+    if request.path == "/login/" or request.path == "/register" or request.path == "/insertSQL":
+        return None
+    if "username" not in session:
+        return redirect("/login/")
+    return None
 
-@app.route("/index",methods = ['POST'])
+@app.route("/")
 def index():
+     return render_template("index.html")
+
+@app.route('/login/', methods=['GET','POST'])
+def login():
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')
         user = getUserInfo(username)
         if user:
             if username == str(list(user[0])[0]) and password == str(list(user[0])[2]):
-                return render_template("index.html")
+                session['username'] = username
+                session.permanent = True
+                # return redirect(url_for('index'))
+                # return render_template("index.html")
+                return redirect('/')
             else:
                 return "<h1>login Failure !</h1>"
         else:
             return "<h1>login Failure !</h1>"
-@app.route("/index.html",methods=['GET','POST'])
-def showHome():
-    return render_template("index.html")
+    return render_template("login.html")
 
+@app.context_processor
+def my_context_processor():
+    user = session.get('username')
+    if user:
+        return {'login_user': user}
+    return {}
+
+@app.route('/logout/')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route("/users",methods=['GET','POST'])
 def showUser():
@@ -54,7 +75,9 @@ def insertSQL():
         tel = request.form.get('inputTel')
         status = registerUser((name,team,password,tel))
         if status != False:
-            return render_template("index.html")
+            session['username'] = name
+            session.permanent = True
+            return redirect("/")
         else:
             return render_template("register.html")
 

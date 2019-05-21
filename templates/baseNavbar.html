@@ -4,8 +4,8 @@
 <nav class="navbar navbar-default navbar-inverse navbar-static-top" role="navigation">
 	<div class="container-fluid">
     <div class="navbar-header">
-        <!--<a class="navbar-brand" href="{{url_for('showHome')}}">Trips</a>-->
-        <a class="navbar-brand" href="/index.html">Home</a>
+        <!--<a class="navbar-brand" href="{{url_for('index')}}">Trips</a>-->
+        <a class="navbar-brand" href="/">Home</a>
     </div>
     <div>
         <ul class="nav navbar-nav">
@@ -24,13 +24,17 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-            <a class="dropdown-toggle glyphicon glyphicon-user" data-toggle="dropdown">
-                hi <b class="caret"></b>
-            </a>
+              {% if login_user %}
+                <a class="dropdown-toggle glyphicon glyphicon-user" data-toggle="dropdown">
+                hi,{{ login_user }} <b class="caret"></b>
+                </a>
+               {% else %}
+                    <a href="{{ url_for('login') }}">登录</a>
+              {% endif %}
             <ul class="dropdown-menu">
                 <li><a href="#">setting</a></li>
                 <li class="divider"></li>
-                <li><a href="/">logout</a></li>
+                <li><a href="{{ url_for('logout') }}">注销</a></li>
             </ul>
         </li>
         </ul>
