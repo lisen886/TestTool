@@ -42,9 +42,9 @@ def login():
                 # return render_template("index.html")
                 return redirect('/')
             else:
-                return "<h1>login Failure !</h1>"
+                return render_template("login.html")
         else:
-            return "<h1>login Failure !</h1>"
+            return redirect('/register')
     return render_template("login.html")
 
 @app.context_processor
