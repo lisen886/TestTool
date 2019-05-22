@@ -18,6 +18,8 @@ file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
 def before_request():
     if request.path == "/login/" or request.path == "/register" or request.path == "/insertSQL":
         return None
+    if request.path == "/static/css/style.css" or request.path == "/static/js/vector.js" or request.path == "/static/img/TestTool.png":
+        return None
     if "username" not in session:
         return redirect("/login/")
     return None
