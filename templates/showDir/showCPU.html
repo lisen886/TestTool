@@ -1,5 +1,5 @@
 {% extends "baseNavbar.html" %}
-{% block title %}Test Tool | Progress{% endblock %}
+{% block title %}Test Tool | Perf{% endblock %}
 {% block page_content %}
 <div id="main" style="width: 1000px;height:500px"></div>
 {% endblock %}
@@ -47,7 +47,7 @@
 };
       //加载数据
       jQuery.ajax({
-        url:"/getCPU",
+        url:"/getCPUMEM",
         type:'get',
         dataType:'json',
         success:function(jsons){

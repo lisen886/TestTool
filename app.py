@@ -1,7 +1,7 @@
 from flask import render_template,send_from_directory,Flask,request,jsonify,Response,abort,session,redirect,url_for
 from werkzeug.utils import secure_filename
 from flask_bootstrap import Bootstrap
-import platform
+import platform,time,random
 from script.lib import *
 from script.countTestPlan import *
 from script.excel2xml import *
@@ -41,8 +41,8 @@ def login():
                 # return redirect(url_for('index'))
                 # return render_template("index.html")
                 return redirect('/')
-            else:
-                return render_template("login.html")
+            # else:
+                # return render_template("login.html")
         else:
             return redirect('/register')
     return render_template("login.html")
@@ -208,18 +208,22 @@ def deleteFile(filename):
             content = json.dumps(datas)
             resp = Response_headers(content)
             return resp
-@app.route("/showCPU",methods=['GET','POST'])
-def showCPU():
+@app.route("/showPerf",methods=['GET','POST'])
+def showPerf():
     return render_template("showDir/showCPU.html")
 
-@app.route("/getCPU",methods=['GET','POST'])
-def getCPU():
-    xlist = ["12:07", "12:08", "12:09", "12:10", "12:11", "12:12", "12:13"]
-    cpulist = [13, 16, 11, -8, 30, 24, 11]
-    memlist = [50, 60, 45, 123, 1, -12, 80]
+@app.route("/getCPUMEM",methods=['GET','POST'])
+def getCPUMEM():
+    xlist = []
+    cpulist = []
+    memlist = []
+    for i in range(20):
+        xlist.append(time.strftime('%H:%M:%S', time.localtime(time.time())))
+        cpulist.append(random.randint(0,300))
+        memlist.append(random.randint(200,400))
     datas = {
         "xcontent": xlist,
-        "data": [{"name":"cpu","data":cpulist},{"name":"MEM","data":memlist}]
+        "data": [{"name":"CPU","data":cpulist},{"name":"内存","data":memlist}]
     }
     content = json.dumps(datas)
     resp = Response_headers(content)
