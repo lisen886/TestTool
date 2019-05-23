@@ -208,6 +208,21 @@ def deleteFile(filename):
             content = json.dumps(datas)
             resp = Response_headers(content)
             return resp
+@app.route("/showCPU",methods=['GET','POST'])
+def showCPU():
+    return render_template("showDir/showCPU.html")
 
+@app.route("/getCPU",methods=['GET','POST'])
+def getCPU():
+    xlist = ["12:07", "12:08", "12:09", "12:10", "12:11", "12:12", "12:13"]
+    cpulist = [13, 16, 11, -8, 30, 24, 11]
+    memlist = [50, 60, 45, 123, 1, -12, 80]
+    datas = {
+        "xcontent": xlist,
+        "data": [{"name":"cpu","data":cpulist},{"name":"MEM","data":memlist}]
+    }
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)
