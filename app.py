@@ -89,7 +89,7 @@ def deleteUser():
     status = deleteUserInfo(userName)
     if status != False:
         if session.get('username') == userName:
-            session.clear()
+            session.pop('username')
         return jsonify({'status': 200, 'message': 'pass'})
     else:
         return jsonify({'status': 400, 'message': 'error'})
