@@ -59,7 +59,7 @@
                 <td class="success" style="width: 60%">{{ i }}</td>
                 <td class="success" style="width: 40%">
                     <a class="tooltip-show" data-toggle="tooltip" title="下载xml文件" href="/download/{{ i }}"><span class="glyphicon glyphicon-download-alt"></span></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <a class="tooltip-show" data-toggle="tooltip" title="删除源xlsx&xml文件" href="/deleteFile/{{ i }}"><span class="glyphicon glyphicon-trash"></span></a>
+                    <a class="tooltip-show" data-toggle="tooltip" title="删除源xlsx&xml文件" name="{{ i }}" id="deleteHistoryFile" onclick="deleteHistoryFile()"><span class="glyphicon glyphicon-trash"></span></a>
                 </td>
             </tr>
         {% endfor %}
@@ -120,5 +120,24 @@
         })
     }
 
+    function deleteHistoryFile() {
+	var filename = document.getElementById('deleteHistoryFile').getAttribute('name');
+    $.ajax({
+        url:'/deleteFile/'+filename,
+        type:'post',
+        dataType: 'json',
+        data:{catename:filename},
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                location.reload();
+            }else {
+                alert("无法删除该用户！！！")
+            }
+
+        }
+    })
+}
 </script>
 {% endblock %}

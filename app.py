@@ -194,22 +194,25 @@ def download(filename):
 def deleteFile(filename):
     if request.method=="GET":
         file = secure_filename(filename)
-        if os.path.isfile(os.path.join('upload', file)):
-            filefirstname = os.path.join(file_dir, file).split(".")[0]
-            print("要删除的文件：%s"% filefirstname)
-            sysstr = platform.system()
-            if (sysstr == "Windows"):
-                cmd = "del "+filefirstname+".*"
-            else:
-                cmd = "rm "+filefirstname+".*"
-            try:
-                os.system(cmd)
-                datas = {"status": 200, "msg": "源文件删除成功"}
-            except:
-                datas = {"status": 401, "msg": "源文件删除失败"}
-            content = json.dumps(datas)
-            resp = Response_headers(content)
-            return resp
+    elif request.method == "POST":
+        file = request.form.get('catename')
+    if os.path.isfile(os.path.join('upload', file)):
+        filefirstname = os.path.join(file_dir, file).split(".")[0]
+        print("要删除的文件：%s"% filefirstname)
+        sysstr = platform.system()
+        if (sysstr == "Windows"):
+            cmd = "del "+filefirstname+".*"
+        else:
+            cmd = "rm "+filefirstname+".*"
+        try:
+            os.system(cmd)
+            datas = {"status": 200, "msg": "源文件删除成功"}
+        except:
+            datas = {"status": 401, "msg": "源文件删除失败"}
+        content = json.dumps(datas)
+        resp = Response_headers(content)
+        return resp
+
 @app.route("/showPerf",methods=['GET','POST'])
 def showPerf():
     return render_template("showDir/showCPU.html")
