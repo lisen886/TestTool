@@ -88,6 +88,8 @@ def deleteUser():
     userName=request.form.get('catename')
     status = deleteUserInfo(userName)
     if status != False:
+        if session.get('username') == userName:
+            session.clear()
         return jsonify({'status': 200, 'message': 'pass'})
     else:
         return jsonify({'status': 400, 'message': 'error'})
