@@ -215,7 +215,12 @@ def deleteFile(filename):
 
 @app.route("/showPerf",methods=['GET','POST'])
 def showPerf():
-    return render_template("showDir/showCPU.html")
+    values = getPerKeyInfo()
+    versions = values.get("version")
+    browsers = values.get("browser")
+    modes = values.get("mode")
+    codecs = values.get("codec")
+    return render_template("showDir/showReport.html", versions=versions, browsers=browsers, modes=modes, codecs=codecs)
 
 @app.route("/getCPUMEM",methods=['GET','POST'])
 def getCPUMEM():
@@ -229,6 +234,39 @@ def getCPUMEM():
     datas = {
         "xcontent": xlist,
         "data": [{"name":"CPU","data":cpulist},{"name":"内存","data":memlist}]
+    }
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
+
+@app.route("/showQearyResult",methods=['GET','POST'])
+def showQearyResult():
+    version_checkList = request.form.get('version_check')
+    browser_checkList = request.form.get('browser_check')
+    mode_checkList = request.form.get('mode_check')
+    codec_checkList = request.form.get('codec_check')
+    index_checkList = request.form.get('index_check')
+    info_dict = getPerInfo(index_checkList,version_checkList,browser_checkList,mode_checkList,codec_checkList)
+    new_data = []
+    for browser in json.loads(browser_checkList):
+        for mode in json.loads(mode_checkList):
+            for codec in json.loads(codec_checkList):
+                if browser == 'safari' and codec == "vp8":
+                    continue
+                for key in info_dict.keys():
+                    new_xlist = []
+                    new_value = []
+                    for value in info_dict[key]:
+                        if browser in value and mode in value and codec in value:
+                            new_xlist.append(value[1])
+                            new_value.append(value[5])
+                    new_data.append({"name":"_".join([key,browser,mode,codec]),
+                                     "data":new_value,
+                                     "xcontent":new_xlist
+                                     })
+
+    datas = {
+        "data": new_data
     }
     content = json.dumps(datas)
     resp = Response_headers(content)

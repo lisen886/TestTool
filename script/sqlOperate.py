@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import sqlite3
+import pymysql
 
 def operateCreatTable(DBNAME,value):
     conn = sqlite3.connect(DBNAME)
@@ -83,3 +85,21 @@ def operateDelete(DBNAME,value):
 # values = operateSelect("testDB.db",select)
 # print(values)
 
+
+def mysql_query(cmd):
+    # 打开数据库连接
+    db = pymysql.connect("localhost", "root", "", "webRTC_per", charset='utf8')
+
+    # 使用cursor()方法获取操作游标
+    cursor = db.cursor()
+
+    # 使用execute方法执行SQL语句
+    cursor.execute(cmd)
+
+    fetch_all = cursor.fetchall()
+
+    # 关闭游标
+    cursor.close()
+    # 关闭数据库连接
+    db.close()
+    return fetch_all

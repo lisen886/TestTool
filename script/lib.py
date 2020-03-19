@@ -32,3 +32,29 @@ def updateUserInfo(inputName,updateName,updateTeam,updatePassword,updateTel):
     updateCondition = "UPDATE COMPANY SET NAME = "+json.dumps(updateName)+", TEAM="+json.dumps(updateTeam)+", PASSWORD ="+json.dumps(updatePassword)+", TEL="+json.dumps(updateTel)+" WHERE NAME = "+json.dumps(inputName)
     values = operateUpdate("userDB.db", updateCondition)
     return values
+
+def getPerKeyInfo():
+    values = mysql_query('SELECT * FROM CPU order by No ASC')
+    keyInfo = {}
+    versionList = []
+    browserList = []
+    modeList = []
+    codecList = []
+    for No,version,browser,mode,codec,value in values:
+        versionList.append(version)
+        browserList.append(browser)
+        modeList.append(mode)
+        codecList.append(codec)
+    keyInfo['version'] = list(sorted(set(versionList)))
+    keyInfo['browser'] = list(sorted(set(browserList)))
+    keyInfo['mode'] = list(sorted(set(modeList)))
+    keyInfo['codec'] = list(sorted(set(codecList)))
+    return keyInfo
+
+def getPerInfo(table_index,version,browser,mode,codec):
+    valueDict = {}
+    for table in json.loads(table_index):
+        cmd = 'SELECT * FROM ' + table + ' WHERE version in ' + version.replace("[","(").replace("]",")") +' and browser in ' + browser.replace("[","(").replace("]",")")+' and mode in ' + mode.replace("[","(").replace("]",")")+' and codec in ' + codec.replace("[","(").replace("]",")" + 'ORDER BY No asc')
+        values = mysql_query(cmd)
+        valueDict[table]=values
+    return valueDict
