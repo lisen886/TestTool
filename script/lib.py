@@ -58,3 +58,12 @@ def getPerInfo(table_index,version,browser,mode,codec):
         values = mysql_query(cmd)
         valueDict[table]=values
     return valueDict
+
+def getConfigs():
+    cmd = 'SELECT * FROM TestToolConfig'
+    values = mysql_query(cmd)
+    return values
+
+def updateConfigInfo(name,value):
+    updateCondition = "UPDATE TestToolConfig SET Name = "+json.dumps(name)+", value="+json.dumps(value)+ " WHERE Name = "+json.dumps(name)
+    mysql_update(updateCondition)

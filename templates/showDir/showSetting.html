@@ -1,0 +1,66 @@
+{% extends "baseNavbar.html" %}
+{% block title %}Test Tool | Setting{% endblock %}
+{% block page_content %}
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Config Setting
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-bordered table-hover table-condensed">
+                            <tr>
+                                <th>配置项</th>
+                                <th>默认值</th>
+                                <th>修改信息</th>
+                            </tr>
+                            {% for i in value %}
+                                <tr>
+                                    <td>{{ i[1] }}</td>
+                                    <td>{{ i[2] }}</td>
+                                    <td>
+                                        <a id="modal-82951" href="#modal-container-82951" data-toggle="modal" data-id="{{ i[1] }},{{ i[2] }}"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                        </table>
+                    </div>
+{#                    <div class="panel-footer">#}
+{#                        Panel footer#}
+{#                    </div>#}
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="col-md-12 column">
+    <div class="modal fade" id="modal-container-82951" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        修改配置信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    配置项：<input type="text" name="Name" id="Name" />
+                    默认值：<input type="text" name="value" id="value"/>
+                </div>
+                <div class="modal-footer">
+                     <button type="button" class="btn btn-primary" onclick="updateConfig()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="../../static/js/my-script.js"></script>
+{% endblock %}

@@ -9,7 +9,6 @@
     </div>
     <div>
         <ul class="nav navbar-nav">
-{#            <li><a href="/users">User Info</a></li>#}
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown">
                     TestLink Tool <b class="caret"></b>
@@ -22,9 +21,9 @@
                 </ul>
             </li>
             <li><a href="/showPerf">TestReport</a></li>
-            <li><a href="http://10.80.0.171:8080/jenkins">Jenkins</a></li>
-            <li><a href="http://10.80.0.171:9876">FileBrowser</a></li>
-            <li><a href="https://postwoman.io/">接口测试</a></li>
+            <li><a href="https://postwoman.io/">Postwoman</a></li>
+            <li><a href="#" id="jenkins">Jenkins</a></li>
+            <li><a href="#" id="FileBrowser">FileBrowser</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -36,7 +35,8 @@
                     <a href="{{ url_for('login') }}">登录</a>
               {% endif %}
             <ul class="dropdown-menu">
-                <li><a href="users">setting</a></li>
+                <li><a href="/setting">setting</a></li>
+                <li><a href="/users">users</a></li>
                 <li class="divider"></li>
                 <li><a href="{{ url_for('logout') }}">注销</a></li>
             </ul>
@@ -61,4 +61,27 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        window.onload = function setValue(){
+            let a = document.getElementById("jenkins");
+            let b = document.getElementById("FileBrowser");
+            $.ajax({
+                url:'/getConfig',
+                type:'get',
+                dataType: 'json',
+                error:function(){
+                    alert('出现错误！');
+                },success:function (data){
+                    if(data.status == 200){
+                        a.href = data.message["jenkins"];
+                        b.href = data.message["FileBrowser"];
+                    }
+                }
+            })
+        };
+    </script>
 {% endblock %}

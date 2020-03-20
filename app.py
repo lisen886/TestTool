@@ -64,6 +64,22 @@ def showUser():
     values = getValue()
     return render_template("showDir/users.html",value=values)
 
+@app.route("/setting",methods=['GET','POST'])
+def showSetting():
+    configs = getConfigs()
+    return render_template("showDir/showSetting.html",value=configs)
+
+@app.route("/getConfig",methods=['GET','POST'])
+def getConfig():
+    configs = getConfigs()
+    if configs != False:
+        config_dict = {}
+        for config in configs:
+            config_dict[config[1]]=config[2]
+        return jsonify({'status': 200, 'message': config_dict})
+    else:
+        return jsonify({'status': 400, 'message': 'error'})
+
 @app.route("/register")
 def register():
     return render_template("register.html")
@@ -101,6 +117,16 @@ def updateUser():
     password=request.form.get('password')
     tel=request.form.get('tel')
     status = updateUserInfo(userName,userName,team,password,tel)
+    if status != False:
+        return jsonify({'status': 200, 'message': 'pass'})
+    else:
+        return jsonify({'status': 400, 'message': 'error'})
+
+@app.route('/updateConfig',methods=['POST','GET'])
+def updateConfig():
+    name=request.form.get('Name')
+    value=request.form.get('value')
+    status = updateConfigInfo(name,value)
     if status != False:
         return jsonify({'status': 200, 'message': 'pass'})
     else:

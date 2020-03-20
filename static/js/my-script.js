@@ -22,6 +22,18 @@ $('#modal-container-829515').on('show.bs.modal', function (event) {
     $('#update').modal('show');
 });
 
+$('#modal-container-82951').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    cateid = button.data('id').split(",");
+	//向模态框中传值
+	Name = cateid[0];
+	value = cateid[1];
+
+    $('#Name').val(Name);
+    $('#value').val(value);
+    $('#update').modal('show');
+});
+
 function deleteUser() {
 	var catename = $("#deleteUserName").val();
     // if (catename == '') {
@@ -65,6 +77,28 @@ function updateUser() {
                 location.reload();
             }else {
                 alert("无法更新该用户信息！！！")
+            }
+
+        }
+    })
+}
+
+function updateConfig() {
+	var Name = $("#Name").val();
+	var value = $("#value").val();
+    $.ajax({
+        url:'/updateConfig',
+        type:'post',
+        dataType: 'json',
+        data:{Name:Name,value:value},
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#modal-container-829514').modal('hide');
+                location.reload();
+            }else {
+                alert("无法更新配置信息！！！")
             }
 
         }

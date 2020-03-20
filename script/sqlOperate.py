@@ -103,3 +103,18 @@ def mysql_query(cmd):
     # 关闭数据库连接
     db.close()
     return fetch_all
+
+def mysql_update(cmd):
+    # 打开数据库连接
+    db = pymysql.connect("localhost", "root", "", "webRTC_per", charset='utf8')
+
+    # 使用cursor()方法获取操作游标
+    cursor = db.cursor()
+
+    # 使用execute方法执行SQL语句
+    cursor.execute(cmd)
+    db.commit()
+    # 关闭游标
+    cursor.close()
+    # 关闭数据库连接
+    db.close()
