@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from flask import render_template,send_from_directory,Flask,request,jsonify,Response,abort,session,redirect,url_for
 from werkzeug.utils import secure_filename
 from flask_bootstrap import Bootstrap
