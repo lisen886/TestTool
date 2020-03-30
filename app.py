@@ -218,7 +218,10 @@ def upload_excel2jira():
     if f and allowed_file(fileName):  # 判断是否是允许上传的文件类型
         file = os.path.join(file_dir, fileName)
         f.save(file)
-        resList = e2j.excel2jira(userName, passWord,checkJiraExistFlag).import2jira(file)
+        try:
+            resList = e2j.excel2jira(userName, passWord,checkJiraExistFlag).import2jira(file)
+        except Exception as e:
+            resList = [e.args]
         datas = {"status": 200, "msg": resList}
     else:
         datas = {"status": 501, "msg": fileName}

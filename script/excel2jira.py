@@ -23,9 +23,10 @@ class jiraApi():
                         "accessToken": self.accessToken,
                         }
         if self.getMyPermissions(userName, passWord) == False:
-            passWord = input('Please enter the JIRA account password again:')
-            if self.getMyPermissions(userName, passWord) == False:
-                exit("密码错误")
+            raise ConnectionError("密码错误")
+            # passWord = input('Please enter the JIRA account password again:')
+            # if self.getMyPermissions(userName, passWord) == False:
+            #     exit("密码错误")
 
     def getMyPermissions(self, userName, passWord):
         url = "https://" + self.domainName + "/rest/api/2/mypermissions"
@@ -95,10 +96,14 @@ class jiraApi():
             testCaseJsonStr["fields"].update({"customfield_12309": {"steps": stepJsonList}})
         try:
             response = requests.post(url, data=json.dumps(testCaseJsonStr), headers=self.headers,auth=self.auth).json()
-            # print(response)
-            return response.get("key")
-        except:
+            print(response)
+            if response.get("key"):
+                return response.get("key")
+            else:
+                return response.get("errors")
+        except Exception as e:
             print("this testcase create fail %s "% testCaseJsonStr["fields"]["summary"])
+            return e.args
 
     # 获取测试用例
     def getTestCaseByKey(self,key):
@@ -381,7 +386,7 @@ class excel2jira():
         sheet = workbook.sheet_by_index(0)
         test_set = sheet.row_values(0)[0]
         case_count = sheet.nrows -2
-        bar = ProgressBar(total=case_count)
+        # bar = ProgressBar(total=case_count)
         caseJiraIDLists = []
         for i in range(2, sheet.nrows):
             case_name = sheet.cell_value(i, 0)
@@ -426,12 +431,12 @@ class excel2jira():
                                                       stepDictList=stepDictList
                                                       )
                 caseJiraIDLists.append(case_jira_id)
-                bar.move()
-                bar.log("Case created: %s | jira ID: %s" % (case_name,case_jira_id))
+                # bar.move()
+                # bar.log("Case created: %s | jira ID: %s" % (case_name,case_jira_id))
                 resList.append("Case created: %s | jira ID: %s" % (case_name,case_jira_id))
         if len(caseJiraIDLists) != 0:
             testSetJiraID = self.jira.createTestJira(test_set, "Test Set")
-            print("Add the case of this list:%s to testSet:%s"%(caseJiraIDLists, testSetJiraID))
+            # print("Add the case of this list:%s to testSet:%s"%(caseJiraIDLists, testSetJiraID))
             resList.append("Add the case of this list:%s to testSet:%s"%(caseJiraIDLists, testSetJiraID))
             self.jira.addTestsToTestSet(caseJiraIDLists, testSetJiraID)
         return resList
