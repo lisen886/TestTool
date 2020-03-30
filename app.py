@@ -6,6 +6,7 @@ import platform,time,random
 from script.lib import *
 from script.countTestPlan import *
 from script.excel2xml import *
+import script.excel2jira as e2j
 app = Flask(__name__)
 app.secret_key="asdada1231"
 bootstrap = Bootstrap(app)
@@ -204,6 +205,27 @@ def api_upload():
     resp = Response_headers(content)
     return resp
 
+# 上传文件
+@app.route('/upload_excel2jira', methods=['POST'], strict_slashes=False)
+def upload_excel2jira():
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)
+    f = request.files['file']  # 从表单的file字段获取文件，myfile为该表单的name值
+    userName = request.form.get('userName')
+    passWord = request.form.get('passWord')
+    checkJiraExistFlag = request.form.get('checkJiraExistFlag')
+    fileName = "".join(f.filename.split())
+    if f and allowed_file(fileName):  # 判断是否是允许上传的文件类型
+        file = os.path.join(file_dir, fileName)
+        f.save(file)
+        resList = e2j.excel2jira(userName, passWord,checkJiraExistFlag).import2jira(file)
+        datas = {"status": 200, "msg": resList}
+    else:
+        datas = {"status": 501, "msg": fileName}
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
+
 @app.route('/download/<filename>', methods=['GET','POST'], strict_slashes=False)
 def download(filename):
     if request.method=="GET":
@@ -298,5 +320,10 @@ def showQearyResult():
     content = json.dumps(datas)
     resp = Response_headers(content)
     return resp
+
+@app.route("/excel2jira")
+def api_excel2jira():
+     return render_template("showDir/excel2jira.html")
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)

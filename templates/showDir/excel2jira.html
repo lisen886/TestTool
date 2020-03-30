@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+{% extends "baseNavbar.html" %}
+{% block title %}Test Tool | excel2xml{% endblock %}
+{% block page_content %}
+
+    <div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						Jira操作需要您的账户&密码
+					</h3>
+				</div>
+				<div class="panel-body">
+					<div class="input-group input-group-sm col-xs-3">
+                        <span class="input-group-addon">@</span>
+                        <input type="text" class="form-control" placeholder="userName" id="user_name">
+                    </div>
+                    <br>
+                    <div class="input-group input-group-sm col-xs-3">
+                        <span class="input-group-addon">*</span>
+                        <input type="text" class="form-control" placeholder="passWord" id="pass_word">
+                    </div>
+                    <div class="checkbox"><label><input type="checkbox" id="check_flag">是否检查Case已经存在</label></div>
+				</div>
+                <div class="panel-footer">
+                    <button type="button" class="btn btn-primary" onclick="start()" id="btn_search">开启</button>
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+    <form id="form" action="upload/insert" method="post" enctype="multipart/form-data" style="display: none;">
+         <div class="row form-group">
+            <label class="col-md-8">请选择将要上传的Excel文件: <small>(**暂不支持中文文件名**)</small></label>
+            <label class="col-md-4 text-right">
+                <button type="button" class="btn btn-link"><a href="/download/excel2jiraDemo.xlsx">下载Excel用例模板</a></button>
+            </label>
+            <div class="col-sm-12">
+                <input id="file-1" name="file" multiple type="file" data-show-caption="true">
+            </div>
+        </div>
+
+         <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            新上传的TestCase:
+                        </h3>
+                    </div>
+                    <div class="panel-body" id="message">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.2/css/fileinput.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/bootstrap-fileinput/4.3.0/js/fileinput_locale_zh.js"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.2/js/fileinput.js"></script>
+<script>
+    function start() {
+        let user_name = $('#user_name').val();
+        let pass_word = $('#pass_word').val();
+        let check_flag = document.getElementById('check_flag').checked;
+        if (!user_name || !pass_word){
+            alert("麻烦输一下Jira账户密码，方便导入用例！！！")
+        }
+        else {
+            document.getElementById("form").style.display="";
+            initFileInput("file-1",user_name,pass_word,check_flag);
+        }
+    }
+
+    function initFileInput(ctrlName,user_name,pass_word,check_flag) {
+        var control = $('#' + ctrlName);
+        control.fileinput({
+            language: 'zh', //设置语言
+            uploadUrl: "/upload_excel2jira", //上传的地址
+            allowedFileExtensions: ['xlsx','jpg', 'gif', 'png'],//接收的文件后缀
+            uploadAsync: true, //默认异步上传
+            showUpload: true, //是否显示上传按钮
+            showRemove : true, //显示移除按钮
+            showPreview : true, //是否显示预览
+            showCaption: false,//是否显示标题
+            browseClass: "btn btn-primary", //按钮样式
+            enctype: 'multipart/form-data',
+            validateInitialCount:true,
+            previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+            msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+            uploadExtraData:{
+                "userName":user_name,
+                "passWord":pass_word,
+                "checkJiraExistFlag":check_flag
+            }
+
+        }).on('filepreupload', function() {     //上传中
+            console.log('文件正在上传');
+        }).on("fileuploaded", function (event, data) {    //一个文件上传成功
+            let resList = data.response.msg;
+            let t = document.getElementById("message");
+            let itemHtml="";
+            for (let i = 0; i < resList.length; i++) {
+                itemHtml += resList[i]+'<br>';
+             }
+             t.innerHTML=itemHtml;
+
+
+        }).on('fileerror', function(event, data) {  //一个文件上传失败
+            console.log('文件上传失败！'+data.response.msg);
+
+
+        })
+    }
+
+</script>
+{% endblock %}
