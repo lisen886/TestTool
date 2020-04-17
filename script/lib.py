@@ -1,5 +1,12 @@
 from script.sqlOperate import *
 import json
+import configparser
+conf = configparser.ConfigParser()
+conf.read("extend.ini")
+host = conf.get('mysql','host')
+username = conf.get('mysql','username')
+password = conf.get('mysql','password')
+WebRTC_DB = conf.get('mysql','WebRTC_DB')
 
 def creatTable():
     creatTable = '''CREATE TABLE COMPANY
@@ -34,7 +41,7 @@ def updateUserInfo(inputName,updateName,updateTeam,updatePassword,updateTel):
     return values
 
 def getPerKeyInfo():
-    values = mysql_query('SELECT * FROM CPU order by No ASC')
+    values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd='SELECT * FROM CPU order by No ASC')
     keyInfo = {}
     versionList = []
     browserList = []
@@ -55,15 +62,15 @@ def getPerInfo(table_index,version,browser,mode,codec):
     valueDict = {}
     for table in json.loads(table_index):
         cmd = 'SELECT * FROM ' + table + ' WHERE version in ' + version.replace("[","(").replace("]",")") +' and browser in ' + browser.replace("[","(").replace("]",")")+' and mode in ' + mode.replace("[","(").replace("]",")")+' and codec in ' + codec.replace("[","(").replace("]",")" + 'ORDER BY No asc')
-        values = mysql_query(cmd)
+        values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
         valueDict[table]=values
     return valueDict
 
 def getConfigs():
     cmd = 'SELECT * FROM TestToolConfig'
-    values = mysql_query(cmd)
+    values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
     return values
 
 def updateConfigInfo(name,value):
     updateCondition = "UPDATE TestToolConfig SET Name = "+json.dumps(name)+", value="+json.dumps(value)+ " WHERE Name = "+json.dumps(name)
-    mysql_update(updateCondition)
+    mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=updateCondition)

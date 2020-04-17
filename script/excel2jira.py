@@ -3,11 +3,14 @@ import urllib.request
 import urllib.parse
 from urllib import request
 import ssl
+import configparser
+conf = configparser.ConfigParser()
+conf.read("extend.ini")
 ssl._create_default_https_context = ssl._create_unverified_context
 class jiraApi():
     def __init__(self,userName, passWord):
-        data ={}
-        url = ""
+        data = conf.get('jira','data')
+        url = conf.get('jira','url')
         params = urllib.parse.urlencode(data).encode(encoding='UTF8')
         req = request.Request(url, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=params)
         response = request.urlopen(req)

@@ -1,7 +1,13 @@
 import testlink,json,sys
-url = 'http://10.80.0.220/testlink/lib/api/xmlrpc/v1/xmlrpc.php'
-key = '83301958459ed090e8cf01f4d1832bce'
-tlc = testlink.TestlinkAPIClient(url, key)
+import configparser
+conf = configparser.ConfigParser()
+conf.read("extend.ini")
+key = conf.get('testlink','key')
+url = conf.get('testlink','url')
+try:
+    tlc = testlink.TestlinkAPIClient(url, key)
+except:
+    print("TestLink 服务不可用")
 # tlc.listProjects()
 def get_project():
     projects = []

@@ -86,35 +86,41 @@ def operateDelete(DBNAME,value):
 # print(values)
 
 
-def mysql_query(cmd):
-    # 打开数据库连接
-    db = pymysql.connect("localhost", "root", "", "webRTC_per", charset='utf8')
+def mysql_query(host,username,password,database,cmd):
+    try:
+        # 打开数据库连接
+        db = pymysql.connect(host,username,password,database,charset='utf8')
 
-    # 使用cursor()方法获取操作游标
-    cursor = db.cursor()
+        # 使用cursor()方法获取操作游标
+        cursor = db.cursor()
 
-    # 使用execute方法执行SQL语句
-    cursor.execute(cmd)
+        # 使用execute方法执行SQL语句
+        cursor.execute(cmd)
 
-    fetch_all = cursor.fetchall()
+        fetch_all = cursor.fetchall()
 
-    # 关闭游标
-    cursor.close()
-    # 关闭数据库连接
-    db.close()
-    return fetch_all
+        # 关闭游标
+        cursor.close()
+        # 关闭数据库连接
+        db.close()
+        return fetch_all
+    except Exception as e:
+        print(e)
 
-def mysql_update(cmd):
-    # 打开数据库连接
-    db = pymysql.connect("localhost", "root", "", "webRTC_per", charset='utf8')
+def mysql_update(host,username,password,database,cmd):
+    try:
+        # 打开数据库连接
+        db = pymysql.connect(host,username,password,database, charset='utf8')
 
-    # 使用cursor()方法获取操作游标
-    cursor = db.cursor()
+        # 使用cursor()方法获取操作游标
+        cursor = db.cursor()
 
-    # 使用execute方法执行SQL语句
-    cursor.execute(cmd)
-    db.commit()
-    # 关闭游标
-    cursor.close()
-    # 关闭数据库连接
-    db.close()
+        # 使用execute方法执行SQL语句
+        cursor.execute(cmd)
+        db.commit()
+        # 关闭游标
+        cursor.close()
+        # 关闭数据库连接
+        db.close()
+    except Exception as e:
+        print(e)
