@@ -32,6 +32,17 @@
 	</div>
 </div>
 
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+            <div id="myAlert" class="alert alert-warning" style="display: none;">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <strong>警告！</strong>登录异常！！！
+            </div>
+        </div>
+	</div>
+</div>
+
     <form id="form" action="upload/insert" method="post" enctype="multipart/form-data" style="display: none;">
          <div class="row form-group">
             <label class="col-md-8">请选择将要上传的Excel文件: <small>(**暂不支持中文文件名**)</small></label>
@@ -72,10 +83,27 @@
         if (!user_name || !pass_word){
             alert("麻烦输一下Jira账户密码，方便导入用例！！！")
         }
-        else {
-            document.getElementById("form").style.display="";
-            initFileInput("file-1",user_name,pass_word,check_flag);
+        $.ajax({
+        url:'/checkJiraAccount',
+        type:'post',
+        dataType: 'json',
+        data:{
+            "userName":user_name,
+            "passWord":pass_word
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                document.getElementById("form").style.display="";
+                initFileInput("file-1",user_name,pass_word,check_flag);
+            }
+            else{
+                document.getElementById("myAlert").style.display="";
+                parent.parent.location.reload();
+            }
         }
+    })
     }
 
     function initFileInput(ctrlName,user_name,pass_word,check_flag) {
@@ -118,6 +146,12 @@
 
         })
     }
+
+    $(function(){
+        $(".close").click(function(){
+            $("#myAlert").alert();
+        });
+    });
 
 </script>
 {% endblock %}

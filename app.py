@@ -328,5 +328,19 @@ def showQearyResult():
 def api_excel2jira():
      return render_template("showDir/excel2jira.html")
 
+@app.route("/checkJiraAccount",methods=['POST'])
+def checkJiraAccount():
+    userName = request.form.get('userName')
+    passWord = request.form.get('passWord')
+    try:
+        e2j.jiraApi(userName, passWord)
+        datas = {"status": 200, "msg": "success"}
+    except Exception as e:
+        resList = [e.args]
+        datas = {"status": 401, "msg": resList}
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)

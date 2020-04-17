@@ -11,7 +11,7 @@ class jiraApi():
     def __init__(self,userName, passWord):
         data = conf.get('jira','data')
         url = conf.get('jira','url')
-        params = urllib.parse.urlencode(data).encode(encoding='UTF8')
+        params = urllib.parse.urlencode(json.loads(data)).encode(encoding='UTF8')
         req = request.Request(url, headers={"Content-Type": "application/x-www-form-urlencoded"}, data=params)
         response = request.urlopen(req)
         page = response.read()
