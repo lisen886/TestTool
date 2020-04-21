@@ -116,3 +116,9 @@ def getSysLogSQL():
     cmd = "SELECT * FROM TestToolLog order by No desc"
     values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd,cursorclass="dict")
     return values
+
+def getRoleByNameSQL(Name):
+    cmd = 'SELECT * FROM TestToolRole where Name ='+json.dumps(Name)
+    values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd,cursorclass="dict")
+    role = values[0]["Role"]
+    return role

@@ -66,8 +66,13 @@ def logout():
 
 @app.route("/users",methods=['GET','POST'])
 def showUser():
-    values = getValue()
-    return render_template("showDir/users.html",value=values)
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return render_template("showDir/404.html")
+    else:
+        values = getValue()
+        return render_template("showDir/users.html",value=values)
 
 @app.route("/setting",methods=['GET','POST'])
 def showSetting():
@@ -100,6 +105,7 @@ def insertSQL():
         if status != False:
             session['username'] = name
             session.permanent = True
+            addTestToolLogSerever(name, "Login")
             return redirect("/")
         else:
             return render_template("register.html")
@@ -361,31 +367,46 @@ def cha():
 
 @app.route ('/updateWebRTCInfo',methods=['POST','GET'])
 def updateWebRTCInfo():
-    data = dict(request.form)
-    res = updateWebRTCInfoByNoSQL(data)
-    if res:
-        return jsonify({'status': 200, 'message': 'pass'})
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
     else:
-        return jsonify({'status': 400, 'message': 'error'})
+        data = dict(request.form)
+        res = updateWebRTCInfoByNoSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
 
 
 @app.route ('/insertWebRTCInfo',methods=['POST','GET'])
 def insertWebRTCInfo():
-    data = dict(request.form)
-    res = insertWebRTCInfoByNoSQL(data)
-    if res:
-        return jsonify({'status': 200, 'message': 'pass'})
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
     else:
-        return jsonify({'status': 400, 'message': 'error'})
+        data = dict(request.form)
+        res = insertWebRTCInfoByNoSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
 
 @app.route ('/deleteWebRTCInfo',methods=['POST','GET'])
 def deleteWebRTCInfo():
-    data = dict(request.form)
-    res = deleteWebRTCInfoByNoSQL(data)
-    if res:
-        return jsonify({'status': 200, 'message': 'pass'})
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
     else:
-        return jsonify({'status': 400, 'message': 'error'})
+        data = dict(request.form)
+        res = deleteWebRTCInfoByNoSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
 
 @app.route("/sysLog",methods=['GET','POST'])
 def showSysLog():

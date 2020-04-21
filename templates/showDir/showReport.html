@@ -477,10 +477,11 @@
         },success:function (data){
             if(data.status == 200){
                 $('#showReportByNo-1').modal('hide');
-                genTable()
+                genTable();
                 {#location.reload();#}
             }else {
-                alert("无法更新配置信息！！！")
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
             }
 
         }
@@ -514,7 +515,8 @@
                 $('#insert-showReport-1').modal('hide');
                 genTable();
             }else {
-                alert("无法更新配置信息！！！")
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
             }
 
         }
@@ -541,7 +543,8 @@
                 genTable();
                 {#location.reload();#}
             }else {
-                alert("无法更新配置信息！！！")
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
             }
 
         }
