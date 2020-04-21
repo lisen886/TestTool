@@ -1,6 +1,7 @@
 from script.sqlOperate import *
 import json
 import configparser
+from flask import session
 conf = configparser.ConfigParser()
 conf.read("extend.ini")
 host = conf.get('mysql','host')
@@ -33,11 +34,13 @@ def getUserInfo(inputName):
 def deleteUserInfo(inputName):
     deleteCondition = "DELETE FROM COMPANY WHERE NAME = "+json.dumps(inputName)
     values = operateDelete("userDB.db", deleteCondition)
+    addTestToolLogSerever(session.get('username'), deleteCondition)
     return values
 
 def updateUserInfo(inputName,updateName,updateTeam,updatePassword,updateTel):
     updateCondition = "UPDATE COMPANY SET NAME = "+json.dumps(updateName)+", TEAM="+json.dumps(updateTeam)+", PASSWORD ="+json.dumps(updatePassword)+", TEL="+json.dumps(updateTel)+" WHERE NAME = "+json.dumps(inputName)
     values = operateUpdate("userDB.db", updateCondition)
+    addTestToolLogSerever(session.get('username'), updateCondition)
     return values
 
 def getPerKeyInfo():
@@ -74,6 +77,7 @@ def getConfigs():
 def updateConfigInfo(name,value):
     updateCondition = "UPDATE TestToolConfig SET Name = "+json.dumps(name)+", value="+json.dumps(value)+ " WHERE Name = "+json.dumps(name)
     mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=updateCondition)
+    addTestToolLogSerever(session.get('username'), updateCondition)
 
 def getWebRTCInfoSQL(index):
     cmd = 'SELECT * FROM '+index
@@ -88,14 +92,27 @@ def getWebRTCInfoByNoSQL(No,index):
 def updateWebRTCInfoByNoSQL(data):
     cmd = "update {database[0]} set version='{version[0]}',browser='{browser[0]}',mode='{mode[0]}',codec='{codec[0]}',value={value[0]} where No={No[0]}".format(**data)
     res = mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
     return res
 
 def insertWebRTCInfoByNoSQL(data):
     cmd = "INSERT INTO {database[0]} set version='{version[0]}',browser='{browser[0]}',mode='{mode[0]}',codec='{codec[0]}',value={value[0]}".format(**data)
     res = mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
     return res
 
 def deleteWebRTCInfoByNoSQL(data):
     cmd = "DELETE FROM {database[0]} where No={No[0]}".format(**data)
     res = mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
     return res
+
+def addTestToolLogSerever(Name,Log):
+    cmd = "INSERT INTO TestToolLog set Name='{}',Log={}".format(Name,json.dumps(Log))
+    res = mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
+    return res
+
+def getSysLogSQL():
+    cmd = "SELECT * FROM TestToolLog order by No desc"
+    values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd,cursorclass="dict")
+    return values

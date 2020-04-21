@@ -1,0 +1,38 @@
+{% extends "baseNavbar.html" %}
+{% block title %}Test Tool | Users{% endblock %}
+{% block page_content %}
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            System Log
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-bordered table-hover table-condensed">
+                            <tr>
+                                <th>No</th>
+                                <th>用户名</th>
+                                <th>日志</th>
+                                <th>时间</th>
+                            </tr>
+                                {% for i in value %}
+                                    <tr>
+                                        <td>{{ i.No }}</td>
+                                        <td>{{ i.Name }}</td>
+                                        <td>{{ i.Log }}</td>
+                                        <td>{{ i.Time }}</td>
+                                    </tr>
+                                {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+{% endblock %}

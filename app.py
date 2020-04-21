@@ -40,6 +40,7 @@ def login():
             if username == str(list(user[0])[0]) and password == str(list(user[0])[2]):
                 session['username'] = username
                 session.permanent = True
+                addTestToolLogSerever(username, "Login")
                 # return redirect(url_for('index'))
                 # return render_template("index.html")
                 return redirect('/')
@@ -58,6 +59,8 @@ def my_context_processor():
 
 @app.route('/logout/')
 def logout():
+    user = session.get('username')
+    addTestToolLogSerever(user, "Logout")
     session.clear()
     return redirect(url_for('login'))
 
@@ -383,5 +386,10 @@ def deleteWebRTCInfo():
         return jsonify({'status': 200, 'message': 'pass'})
     else:
         return jsonify({'status': 400, 'message': 'error'})
+
+@app.route("/sysLog",methods=['GET','POST'])
+def showSysLog():
+    values = getSysLogSQL()
+    return render_template("showDir/sysLog.html",value=values)
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)
