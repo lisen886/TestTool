@@ -86,11 +86,13 @@ def operateDelete(DBNAME,value):
 # print(values)
 
 
-def mysql_query(host,username,password,database,cmd):
+def mysql_query(host,username,password,database,cmd,cursorclass=None):
     try:
         # 打开数据库连接
-        db = pymysql.connect(host,username,password,database,charset='utf8')
-
+        if cursorclass:
+            db = pymysql.connect(host,username,password,database,charset='utf8',cursorclass=pymysql.cursors.DictCursor)
+        else:
+            db = pymysql.connect(host, username, password, database, charset='utf8')
         # 使用cursor()方法获取操作游标
         cursor = db.cursor()
 
@@ -122,5 +124,6 @@ def mysql_update(host,username,password,database,cmd):
         cursor.close()
         # 关闭数据库连接
         db.close()
+        return True
     except Exception as e:
         print(e)

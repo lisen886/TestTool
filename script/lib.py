@@ -74,3 +74,28 @@ def getConfigs():
 def updateConfigInfo(name,value):
     updateCondition = "UPDATE TestToolConfig SET Name = "+json.dumps(name)+", value="+json.dumps(value)+ " WHERE Name = "+json.dumps(name)
     mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=updateCondition)
+
+def getWebRTCInfoSQL(index):
+    cmd = 'SELECT * FROM '+index
+    values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getWebRTCInfoByNoSQL(No,index):
+    cmd = 'SELECT * FROM '+index+' where No ='+json.dumps(No)
+    values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def updateWebRTCInfoByNoSQL(data):
+    cmd = "update {database[0]} set version='{version[0]}',browser='{browser[0]}',mode='{mode[0]}',codec='{codec[0]}',value={value[0]} where No={No[0]}".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
+    return res
+
+def insertWebRTCInfoByNoSQL(data):
+    cmd = "INSERT INTO {database[0]} set version='{version[0]}',browser='{browser[0]}',mode='{mode[0]}',codec='{codec[0]}',value={value[0]}".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
+    return res
+
+def deleteWebRTCInfoByNoSQL(data):
+    cmd = "DELETE FROM {database[0]} where No={No[0]}".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
+    return res

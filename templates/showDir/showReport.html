@@ -66,7 +66,7 @@
                             <input type="checkbox" name="index" value="内存">&nbsp;内存&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="CPU">&nbsp;CPU&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="首帧出图">&nbsp;首帧出图&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="视频延时">&nbsp;内存&nbsp;&nbsp;
+                            <input type="checkbox" name="index" value="视频延时">&nbsp;视频延时&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="视频卡顿率">&nbsp;视频卡顿率&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="音频延时">&nbsp;音频延时&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="音频抗丢包边界">&nbsp;音频抗丢包边界&nbsp;&nbsp;
@@ -78,19 +78,106 @@
 				</div>
                 <div class="panel-footer">
                     <button type="button" class="btn btn-primary" onclick="search()" id="btn_search">查找</button>
+                    <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showReport-1" data-toggle="modal">新增 | 更改</button>
                 </div>
             </div>
 		</div>
 	</div>
 </div>
+<div class="col-md-12 column">
+    <div class="modal fade" id="modal-container-showReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        <select id="selectDatabase" class="selectpicker show-tick" title="请选择一项" data-live-search="true" data-size="5">
+                            <option>内存</option>
+                            <option>CPU</option>
+                            <option>首帧出图</option>
+                            <option>视频延时</option>
+                            <option>视频卡顿率</option>
+                            <option>音频延时</option>
+                            <option>音频抗丢包边界</option>
+                            <option>音画同步</option>
+                        </select>
+                        <button type="button" class="btn btn-primary" id="btn_add" href="#insert-showReport-1" data-toggle="modal">新增</button>
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed" id="show">
+                        <tbody id="showbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="modal fade" id="showReportByNo-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        更新信息
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed">
+                        No：<input type="text" name="No" id="showReportByNoNo" /><p></p>
+                        version：<input type="text" name="version" id="showReportByNoVersion" /><p></p>
+                        browser：<input type="text" name="browser" id="showReportByNoBrowser"/><p></p>
+                        mode：<input type="text" name="mode" id="showReportByNoMode"><p></p>
+                        codec：<input type="text" name="codec" id="showReportByNoCodec"><p></p>
+                        value：<input type="text" name="value" id="showReportByNoValue"><p></p>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="updateWebRTC()">更新</button>
+                    <button type="button" class="btn btn-primary" onclick="my_confirm(deleteWebRTC,'','确认是否删除')">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="insert-showReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        新增信息
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed">
+                        Index：<input type="text" id="insertIndex" disabled="disabled"/><p></p>
+                        No：<input type="text" name="No" id="insertNo" disabled="disabled" value="主键可自动生成"/><p></p>
+                        version：<input type="text" name="version" id="insertVersion" /><p></p>
+                        browser：<input type="text" name="browser" id="insertBrowser"/><p></p>
+                        mode：<input type="text" name="mode" id="insertMode"><p></p>
+                        codec：<input type="text" name="codec" id="insertCodec"><p></p>
+                        value：<input type="text" name="value" id="insertValue"><p></p>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="insertWebRTC()">新增</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="main" style="width: 1000px;height:500px"></div>
 {% endblock %}
 {% block scripts %}
-{{ super() }}
-    <script type="text/javascript" src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    {{ super() }}
+    <script src="https://cdn.bootcss.com/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-select/1.12.4/js/i18n/defaults-zh_CN.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap-select/1.12.4/css/bootstrap-select.min.css" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/echarts.js') }}"></script>
 {#    <script src="https://cdn.bootcss.com/echarts/4.6.0/echarts.js"></script>#}
+    <script type="text/javascript" src="../../static/js/my-script.js"></script>
     <script type="text/javascript">
     var myChart = echarts.init(document.getElementById('main'));
     option = {
@@ -244,5 +331,227 @@
         });
 
     }
+
+    function genTable(){
+        var s = document.getElementById("selectDatabase");
+        selectDatabase = s.options[s.selectedIndex].text;
+        $.ajax({
+             type : "post",
+             url : "/getWebRTCInfo",    //请求发送到Servlet处
+             dataType : "json",        //返回数据形式为json
+             data:{
+                 selectDatabase:selectDatabase
+             },
+             error:function(){
+                    alert('请求数据失败,请检查选择条件！');
+                    myChart.hideLoading();
+                },success:function (data){
+                $("#show tbody").html("");
+                 var t = document.getElementById("showbody");
+                 var tr = document.createElement("tr");
+                 var td1 = document.createElement("th");
+                 td1.innerHTML = "No";
+                 var td2 = document.createElement("th");
+                 td2.innerHTML = "version";
+                 var td3 = document.createElement("th");
+                 td3.innerHTML = "browser";
+                 var td4 = document.createElement("th");
+                 td4.innerHTML = "mode";
+                 var td5 = document.createElement("th");
+                 td5.innerHTML = "codec";
+                 var td6 = document.createElement("th");
+                 td6.innerHTML = "value";
+                 var td7 = document.createElement("th");
+                 td7.innerHTML = "operate";
+                 tr.appendChild(td1);
+                 tr.appendChild(td2);
+                 tr.appendChild(td3);
+                 tr.appendChild(td4);
+                 tr.appendChild(td5);
+                 tr.appendChild(td6);
+                 tr.appendChild(td7);
+                 t.appendChild(tr);
+                 for (i = 0; i < data.data.length; i++) {
+                     var tr2 = document.createElement("tr");
+                     var td11 = document.createElement("td");
+                     td11.innerHTML = data.data[i].No;
+                     var td22 = document.createElement("td");
+                     td22.innerHTML = data.data[i].version;
+                     var td33 = document.createElement("td");
+                     td33.innerHTML = data.data[i].browser;
+                     var td44 = document.createElement("td");
+                     td44.innerHTML = data.data[i].mode;
+                     var td55 = document.createElement("td");
+                     td55.innerHTML = data.data[i].codec;
+                     var td66 = document.createElement("td");
+                     td66.innerHTML = data.data[i].value;
+                     var td77 = document.createElement("td");
+                     {#td77.innerHTML = '<a href="/del?No='+data.data[i].No +'&selectDatabase='+selectDatabase+'"'+'>删除</a> | <a href="/cha?No='+data.data[i].No +'&selectDatabase='+selectDatabase+'"'+'>更改</a>';#}
+                     td77.innerHTML = '<a id="showReportByNo" href="#showReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
+                     tr2.appendChild(td11);
+                     tr2.appendChild(td22);
+                     tr2.appendChild(td33);
+                     tr2.appendChild(td44);
+                     tr2.appendChild(td55);
+                     tr2.appendChild(td66);
+                     tr2.appendChild(td77);
+                     t.appendChild(tr2);
+                 }
+            }
+        })
+    };
+
+    $('#selectDatabase').on('changed.bs.select', function () {
+        genTable()
+    });
+
+    var cateid = 0;
+    $('#showReportByNo-1').on('shown.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        cateid = button.data('id').split(",");
+        No = cateid[0];
+        index = cateid[1];
+        $.ajax({
+            url:'/cha',
+            type:'post',
+            dataType: 'json',
+            data:{
+                No:No,
+                index:index
+            },
+            error:function(){
+                alert('出现错误！');
+            },success:function (data){
+                let info = data.data[0];
+                $('#showReportByNoNo').val(info.No);
+                $('#showReportByNoVersion').val(info.version);
+                $('#showReportByNoBrowser').val(info.browser);
+                $('#showReportByNoMode').val(info.mode);
+                $('#showReportByNoCodec').val(info.codec);
+                $('#showReportByNoValue').val(info.value);
+                $('#showReportByNo-1').modal('show');
+            }
+        });
+    });
+
+    $('#insert-showReport-1').on('shown.bs.modal', function () {
+        let value = $("#selectDatabase option:selected").val();
+        if (value){
+            $('#insertIndex').val(value);
+            $('#insert-showReport-1').modal('show');
+        } else
+        {
+            my_showTip("请选择一项需要更新的数据表");
+            $('#insert-showReport-1').modal('hide');
+        }
+    });
+
+    $('#modal-container-showReport-1').on('hide.bs.modal', function () {
+        location.reload();
+    });
+
+    function updateWebRTC() {
+    var s = document.getElementById("selectDatabase");
+    var selectDatabase = s.options[s.selectedIndex].text;
+    var No = $("#showReportByNoNo").val();
+	var version = $("#showReportByNoVersion").val();
+	var browser = $("#showReportByNoBrowser").val();
+	var mode = $("#showReportByNoMode").val();
+	var codec = $("#showReportByNoCodec").val();
+	var value = $("#showReportByNoValue").val();
+    $.ajax({
+        url:'/updateWebRTCInfo',
+        type:'post',
+        dataType: 'json',
+        data:{
+            No:No,
+            version:version,
+            browser:browser,
+            mode:mode,
+            codec:codec,
+            value:value,
+            database:selectDatabase,
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#showReportByNo-1').modal('hide');
+                genTable()
+                {#location.reload();#}
+            }else {
+                alert("无法更新配置信息！！！")
+            }
+
+        }
+    })
+}
+
+    function insertWebRTC() {
+    var s = document.getElementById("insertIndex");
+    var selectDatabase = s.value;
+	var version = $("#insertVersion").val();
+	var browser = $("#insertBrowser").val();
+	var mode = $("#insertMode").val();
+	var codec = $("#insertCodec").val();
+	var value = $("#insertValue").val();
+    $.ajax({
+        url:'/insertWebRTCInfo',
+        type:'post',
+        dataType: 'json',
+        data:{
+            version:version,
+            browser:browser,
+            mode:mode,
+            codec:codec,
+            value:value,
+            database:selectDatabase,
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#insert-showReport-1').modal('hide');
+                genTable();
+            }else {
+                alert("无法更新配置信息！！！")
+            }
+
+        }
+    })
+}
+
+    function deleteWebRTC() {
+        var s = document.getElementById("selectDatabase");
+        var selectDatabase = s.options[s.selectedIndex].text;
+        var No = $("#showReportByNoNo").val();
+        $.ajax({
+        url:'/deleteWebRTCInfo',
+        type:'post',
+        dataType: 'json',
+        data:{
+            No:No,
+            database:selectDatabase,
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#showReportByNo-1').modal('hide');
+                genTable();
+                {#location.reload();#}
+            }else {
+                alert("无法更新配置信息！！！")
+            }
+
+        }
+    })
+
+    }
+
     </script>
+    <style type="text/css">
+        .modal{overflow:auto!important;}
+    </style>
+
 {% endblock %}

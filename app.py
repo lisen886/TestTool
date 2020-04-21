@@ -342,5 +342,46 @@ def checkJiraAccount():
     resp = Response_headers(content)
     return resp
 
+
+@app.route('/getWebRTCInfo',methods=['POST','GET'])
+def getWebRTCInfo():
+    selectDatabase = request.form.get('selectDatabase')
+    data = getWebRTCInfoSQL(selectDatabase)
+    return jsonify({'status': 200, 'data': data})
+
+@app.route ('/cha',methods=['POST','GET'])
+def cha():
+    No = request.form.get('No')
+    index = request.form.get('index')
+    data = getWebRTCInfoByNoSQL(No,index)
+    return jsonify({'status': 200, 'data': data})
+
+@app.route ('/updateWebRTCInfo',methods=['POST','GET'])
+def updateWebRTCInfo():
+    data = dict(request.form)
+    res = updateWebRTCInfoByNoSQL(data)
+    if res:
+        return jsonify({'status': 200, 'message': 'pass'})
+    else:
+        return jsonify({'status': 400, 'message': 'error'})
+
+
+@app.route ('/insertWebRTCInfo',methods=['POST','GET'])
+def insertWebRTCInfo():
+    data = dict(request.form)
+    res = insertWebRTCInfoByNoSQL(data)
+    if res:
+        return jsonify({'status': 200, 'message': 'pass'})
+    else:
+        return jsonify({'status': 400, 'message': 'error'})
+
+@app.route ('/deleteWebRTCInfo',methods=['POST','GET'])
+def deleteWebRTCInfo():
+    data = dict(request.form)
+    res = deleteWebRTCInfoByNoSQL(data)
+    if res:
+        return jsonify({'status': 200, 'message': 'pass'})
+    else:
+        return jsonify({'status': 400, 'message': 'error'})
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)

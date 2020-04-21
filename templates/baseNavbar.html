@@ -21,7 +21,19 @@
                 </ul>
             </li>
             <li><a href="/excel2jira" id="excel2jira">Excel2Jira</a></li>
-            <li><a href="/showPerf">TestReport</a></li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown">
+                    Test Report <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/showPerf">Native Report</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/showPerf">WebRTC Report</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/showPerf">主版本CPU内存 Report</a></li>
+                </ul>
+            </li>
+
             <li><a href="https://postwoman.io/">Postwoman</a></li>
             <li><a href="#" id="jenkins">Jenkins</a></li>
             <li><a href="#" id="FileBrowser">FileBrowser</a></li>
