@@ -8,6 +8,7 @@ host = conf.get('mysql','host')
 username = conf.get('mysql','username')
 password = conf.get('mysql','password')
 WebRTC_DB = conf.get('mysql','WebRTC_DB')
+Native_DB = conf.get('mysql','Native_DB')
 
 def creatTable():
     creatTable = '''CREATE TABLE COMPANY
@@ -122,3 +123,16 @@ def getRoleByNameSQL(Name):
     values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd,cursorclass="dict")
     role = values[0]["Role"]
     return role
+
+##### native mysql #####
+def getNativeVersion():
+    cmd = 'SELECT * FROM BugCount order by version ASC'
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getNativePerInfo(version,indexList):
+    indexList.append("version")
+    cmd = 'SELECT '+",".join(indexList)+' FROM BUGCOUNT WHERE version in ' + str(tuple(version))
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    print(values)
+    return values

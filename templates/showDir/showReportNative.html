@@ -1,5 +1,5 @@
 {% extends "baseNavbar.html" %}
-{% block title %}Test Tool | webRTC Report{% endblock %}
+{% block title %}Test Tool | Native Report{% endblock %}
 {% block page_content %}
 <div class="container">
 	<div class="row clearfix">
@@ -14,70 +14,55 @@
                     <table class="table table-striped table-condensed">
 				<tbody>
 					<tr>
-                        <td width='3%'>
-                            Version：
+                        <td width='11%'>
+                            版本：
                         </td>
 						<td>
-                            <input type="checkbox" id="version" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
+                            <input type="checkbox" id="version_native" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
                             {% for version in versions %}
-                                <input type="checkbox" name="version" value={{ version }}>&nbsp;{{ version }}&nbsp;&nbsp;
+                                <input type="checkbox" name="version_native" value={{ version }}>&nbsp;{{ version }}&nbsp;&nbsp;
                             {% endfor %}
                         </td>
 					</tr>
                     <tr>
                         <td>
-                            Browser：
+                            Bug统计：
                         </td>
 						<td>
-                            <input type="checkbox" id="browser" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
-                            {% for browser in browsers %}
-                                <input type="checkbox" name="browser" value={{ browser }}>&nbsp;{{ browser }}&nbsp;&nbsp;
-                            {% endfor %}
+                            <input type="checkbox" id="bugCount" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
+                            <input type="checkbox" name="bugCount" value="total">&nbsp;total&nbsp;&nbsp;
+                            <input type="checkbox" name="bugCount" value="demo">&nbsp;demo&nbsp;&nbsp;
+                            <input type="checkbox" name="bugCount" value="sdk">&nbsp;sdk&nbsp;&nbsp;
+                            <input type="checkbox" name="bugCount" value="video">&nbsp;video&nbsp;&nbsp;
+                            <input type="checkbox" name="bugCount" value="audio">&nbsp;audio&nbsp;&nbsp;
+                            <input type="checkbox" name="bugCount" value="crash">&nbsp;nativeCrash&nbsp;&nbsp;
                         </td>
 					</tr>
                     <tr>
                         <td>
-                            Mode：
+                            通过率：
                         </td>
 						<td>
-                            <input type="checkbox" id="mode" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
-                            {% for mode in modes %}
-                                <input type="checkbox" name="mode" value={{ mode }}>&nbsp;{{ mode }}&nbsp;&nbsp;
-                            {% endfor %}
+                            <input type="checkbox" name="rate" value="firstTimePassRate">&nbsp; feature一次验收通过率&nbsp;&nbsp;
                         </td>
 					</tr>
                     <tr>
                         <td>
-                            Codec：
+                            各阶段Bug统计：
                         </td>
 						<td>
-                            <input type="checkbox" id="codec" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
-                            {% for codec in codecs %}
-                                <input type="checkbox" name="codec" value={{ codec }}>&nbsp;{{ codec }}&nbsp;&nbsp;
-                            {% endfor %}
-                        </td>
-					</tr>
-                    <tr>
-                        <td>
-                            Index：
-                        </td>
-						<td>
-                            <input type="checkbox" id="index" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="内存">&nbsp;内存&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="CPU">&nbsp;CPU&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="首帧出图">&nbsp;首帧出图&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="视频延时">&nbsp;视频延时&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="视频卡顿率">&nbsp;视频卡顿率&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="音频延时">&nbsp;音频延时&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="音频抗丢包边界">&nbsp;音频抗丢包边界&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="音画同步">&nbsp;音画同步&nbsp;&nbsp;
+                            <input type="checkbox" id="PhaseBugCount" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
+                            <input type="checkbox" name="PhaseBugCount" value="acceptancePhase">&nbsp;验收阶段&nbsp;&nbsp;
+                            <input type="checkbox" name="PhaseBugCount" value="regressionPhase">&nbsp;回归阶段&nbsp;&nbsp;
+                            <input type="checkbox" name="PhaseBugCount" value="acceptancePhaseRate">&nbsp;验收阶段bug占比&nbsp;&nbsp;
+                            <input type="checkbox" name="PhaseBugCount" value="regressionPhaseRate">&nbsp;回归阶段bug占比&nbsp;&nbsp;
                         </td>
 					</tr>
 				</tbody>
 			</table>
 				</div>
                 <div class="panel-footer">
-                    <button type="button" class="btn btn-primary" onclick="search()" id="btn_search">查找</button>
+                    <button type="button" class="btn btn-primary" onclick="searchNative()" id="btn_search">查找</button>
                     <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showReport-1" data-toggle="modal">新增 | 更改</button>
                 </div>
             </div>
@@ -250,51 +235,42 @@
         }
     }
 
-    function search() {
-        let version_checkList =new Array();
-        let browser_checkList =new Array();
-        let mode_checkList =new Array();
-        let codec_checkList =new Array();
+    function searchNative() {
+        let version_native_checkList =new Array();
         let index_checkList =new Array();
-        let obj_version = document.getElementsByName("version");
-        for (let i = 0; i < obj_version.length; i++) {
-                if (obj_version[i].checked)
-                    version_checkList.push(obj_version[i].value);
+
+        let obj_version_native = document.getElementsByName("version_native");
+        for (let i = 0; i < obj_version_native.length; i++) {
+                if (obj_version_native[i].checked)
+                    version_native_checkList.push(obj_version_native[i].value);
         }
-        let obj_browser = document.getElementsByName("browser");
+        let obj_browser = document.getElementsByName("bugCount");
         for (let i = 0; i < obj_browser.length; i++) {
                 if (obj_browser[i].checked)
-                    browser_checkList.push(obj_browser[i].value);
+                    index_checkList.push(obj_browser[i].value);
         }
-        let obj_mode = document.getElementsByName("mode");
+        let obj_mode = document.getElementsByName("rate");
         for (let i = 0; i < obj_mode.length; i++) {
                 if (obj_mode[i].checked)
-                    mode_checkList.push(obj_mode[i].value);
+                    index_checkList.push(obj_mode[i].value);
         }
-        let obj_codec = document.getElementsByName("codec");
+        let obj_codec = document.getElementsByName("PhaseBugCount");
         for (let i = 0; i < obj_codec.length; i++) {
                 if (obj_codec[i].checked)
-                    codec_checkList.push(obj_codec[i].value);
+                    index_checkList.push(obj_codec[i].value);
         }
-        let obj_index = document.getElementsByName("index");
-        for (let i = 0; i < obj_index.length; i++) {
-                if (obj_index[i].checked)
-                    index_checkList.push(obj_index[i].value);
-        }
-        if (index_checkList.length ==0){
-            alert("请选择正确的指标！！！")
-        }
+        var params = {
+            data:JSON.stringify({
+                version_check:version_native_checkList,
+                index_check:index_checkList,
+            })
+
+        };
         $.ajax({
              type : "post",
-             url : "/showQearyResult",    //请求发送到Servlet处
+             url : "/showNativeQearyResult",    //请求发送到Servlet处
              dataType : "json",        //返回数据形式为json
-             data:{
-                 version_check:JSON.stringify(version_checkList),
-                 browser_check:JSON.stringify(browser_checkList),
-                 mode_check:JSON.stringify(mode_checkList),
-                 codec_check:JSON.stringify(codec_checkList),
-                 index_check:JSON.stringify(index_checkList)
-             },
+             data:params,
              error:function(){
                     alert('请求数据失败,请检查选择条件！');
                     myChart.hideLoading();

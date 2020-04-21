@@ -416,5 +416,39 @@ def showSysLog():
 def getLog():
     values = getSysLogSQL()
     return jsonify({'total': len(values), 'rows': values})
+
+@app.route("/showNativePerf",methods=['GET','POST'])
+def showNativePerf():
+    versions = []
+    values = getNativeVersion()
+    for value in values:
+        versions.append(value.get("version"))
+    return render_template("showDir/showReportNative.html", versions=versions)
+
+@app.route("/showNativeQearyResult",methods=['GET','POST'])
+def showNativeQearyResult():
+    data = json.loads(request.form.get('data'))
+    version_checkList = data.get('version_check')
+    index_checkList = data.get('index_check')
+    values = getNativePerInfo(version_checkList,index_checkList)
+    new_data = []
+    index_checkList.remove("version")
+    for index in index_checkList:
+        new_xlist = []
+        new_value = []
+        for value in values:
+            new_xlist.append(value['version'])
+            new_value.append(value[index])
+        new_data.append({"name": index,
+                         "data": new_value,
+                         "xcontent": new_xlist
+                         })
+
+    datas = {
+        "data": new_data
+    }
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)
