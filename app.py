@@ -389,7 +389,11 @@ def deleteWebRTCInfo():
 
 @app.route("/sysLog",methods=['GET','POST'])
 def showSysLog():
+    return render_template("showDir/sysLog.html")
+
+@app.route("/getLog",methods=['GET'])
+def getLog():
     values = getSysLogSQL()
-    return render_template("showDir/sysLog.html",value=values)
+    return jsonify({'total': len(values), 'rows': values})
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)

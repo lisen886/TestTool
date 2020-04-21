@@ -11,21 +11,7 @@
                         </h3>
                     </div>
                     <div class="panel-body">
-                        <table class="table table-bordered table-hover table-condensed">
-                            <tr>
-                                <th>No</th>
-                                <th>用户名</th>
-                                <th>日志</th>
-                                <th>时间</th>
-                            </tr>
-                                {% for i in value %}
-                                    <tr>
-                                        <td>{{ i.No }}</td>
-                                        <td>{{ i.Name }}</td>
-                                        <td>{{ i.Log }}</td>
-                                        <td>{{ i.Time }}</td>
-                                    </tr>
-                                {% endfor %}
+                        <table class="table table-bordered table-hover table-condensed" id="TableId">
                         </table>
                     </div>
                 </div>
@@ -35,4 +21,35 @@
 {% endblock %}
 {% block scripts %}
 {{ super() }}
+    <script src="https://cdn.bootcss.com/bootstrap-table/1.16.0/bootstrap-table.js"></script>
+    <script>
+            $('#TableId').bootstrapTable({
+                url : '/getLog', //请求后台的URL（*）
+                method: 'GET',
+                sidePagination : "client", //分页方式：client客户端分页，server服务端分页（*）
+                pagination : true, //是否显示分页（*）
+                queryParams : "", //传递参数（*）
+                pageSize : 10, //每页显示的记录数
+                pageNumber : 1, //当前第几页
+                pageList : [ 10, 25, 50, 100], //记录数可选列表
+                sortable: true, //是否启用排序
+                striped: true, //是否显示行间隔色
+                search: true, //是否显示表格搜索
+                showRefresh: true,
+                responseHandler: function(data){
+                    return data.rows;  //约定rows
+                },
+                columns : [
+                     {#{checkbox : false},#}
+                     {title: 'No', field: 'No', align: 'center',width:"1%"},
+                     {title: '用户名', field: 'Name', align: 'center',width:"2%"},
+                     {title: '日志', field: 'Log', align: 'left',width:"72%"},
+                     {title: '时间', field: 'Time', align: 'left',width:"25%"}
+            ]
+            });
+    </script>
+    <style type="text/css">
+        .table {table-layout:fixed}
+        {#.table {table-layout:fixed;word-break:break-all;}#}
+    </style>
 {% endblock %}
