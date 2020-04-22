@@ -151,14 +151,14 @@ def getNativeInfoByVersionSQL(version,index):
 
 def updateNativeInfoByVersionSQL(data):
     cmd = "update {database[0]} set features={features[0]},total={total[0]},demo={demo[0]},sdk={sdk[0]},video={video[0]}," \
-          "audio={audio[0]},crash={crash[0]},firstTimePassRate={firstTimePassRate[0]},acceptancePhase={acceptancePhase[0]},regressionPhase={regressionPhase[0]},acceptancePhaseRate={acceptancePhaseRate[0]},regressionPhaseRate={regressionPhaseRate[0]} where version='{version[0]}'".format(**data)
+          "audio={audio[0]},crash={crash[0]},firstTimePassRate={firstTimePassRate[0]},acceptancePhase={acceptancePhase[0]},regressionPhase={regressionPhase[0]},acceptancePhaseRate={acceptancePhaseRate[0]},regressionPhaseRate={regressionPhaseRate[0]},fallbackRate={fallbackRate[0]},cloudCrashRate={cloudCrashRate[0]} where version='{version[0]}'".format(**data)
     res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
     addTestToolLogSerever(session.get('username'), cmd)
     return res
 
 def insertNativeInfoByVersionSQL(data):
     cmd = "INSERT INTO {database[0]} set version='{version[0]}',features={features[0]},total={total[0]},demo={demo[0]},sdk={sdk[0]},video={video[0]}," \
-          "audio={audio[0]},crash={crash[0]},firstTimePassRate={firstTimePassRate[0]},acceptancePhase={acceptancePhase[0]},regressionPhase={regressionPhase[0]},acceptancePhaseRate={acceptancePhaseRate[0]},regressionPhaseRate={regressionPhaseRate[0]}".format(**data)
+          "audio={audio[0]},crash={crash[0]},firstTimePassRate={firstTimePassRate[0]},acceptancePhase={acceptancePhase[0]},regressionPhase={regressionPhase[0]},acceptancePhaseRate={acceptancePhaseRate[0]},regressionPhaseRate={regressionPhaseRate[0]},fallbackRate={fallbackRate[0]},cloudCrashRate={cloudCrashRate[0]}".format(**data)
     res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
     addTestToolLogSerever(session.get('username'), cmd)
     return res

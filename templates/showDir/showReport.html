@@ -78,7 +78,7 @@
 				</div>
                 <div class="panel-footer">
                     <button type="button" class="btn btn-primary" onclick="search()" id="btn_search">查找</button>
-                    <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showReport-1" data-toggle="modal">新增 | 更改</button>
+                    <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showReport-1" data-toggle="modal">编辑</button>
                 </div>
             </div>
 		</div>
@@ -230,7 +230,7 @@
 };
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
-    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    {#myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画#}
 
     function checkOrCancelAll(value){
         //1.获取checkbo的元素对象

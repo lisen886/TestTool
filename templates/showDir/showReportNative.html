@@ -58,12 +58,28 @@
                             <input type="checkbox" name="PhaseBugCount" value="regressionPhaseRate">&nbsp;回归阶段bug占比&nbsp;&nbsp;
                         </td>
 					</tr>
+                    <tr>
+                        <td>
+                            回退率：
+                        </td>
+						<td>
+                            <input type="checkbox" name="fallbackRate" value="fallbackRate">&nbsp; 回退率&nbsp;&nbsp;
+                        </td>
+					</tr>
+                    <tr>
+                        <td>
+                            云测崩溃率：
+                        </td>
+						<td>
+                            <input type="checkbox" name="cloudCrashRate" value="cloudCrashRate">&nbsp; 云测崩溃率&nbsp;&nbsp;
+                        </td>
+					</tr>
 				</tbody>
 			</table>
 				</div>
                 <div class="panel-footer">
                     <button type="button" class="btn btn-primary" onclick="searchNative()" id="btn_search">查找</button>
-                    <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showReport-1" data-toggle="modal">新增 | 更改</button>
+                    <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showReport-1" data-toggle="modal">编辑</button>
                 </div>
             </div>
 		</div>
@@ -116,6 +132,8 @@
                         regressionPhase：<input type="text" name="value" id="regressionPhase"><p></p>
                         acceptancePhaseRate：<input type="text" name="value" id="acceptancePhaseRate"><p></p>
                         regressionPhaseRate：<input type="text" name="value" id="regressionPhaseRate"><p></p>
+                        fallbackRate：<input type="text" name="value" id="fallbackRate"><p></p>
+                        cloudCrashRate：<input type="text" name="value" id="cloudCrashRate"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -151,6 +169,8 @@
                         regressionPhase：<input type="text" name="value" id="insert-regressionPhase"><p></p>
                         acceptancePhaseRate：<input type="text" name="value" id="insert-acceptancePhaseRate"><p></p>
                         regressionPhaseRate：<input type="text" name="value" id="insert-regressionPhaseRate"><p></p>
+                        fallbackRate：<input type="text" name="value" id="insert-fallbackRate"><p></p>
+                        cloudCrashRate：<input type="text" name="value" id="insert-cloudCrashRate"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -222,7 +242,7 @@
 };
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
-    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    {#myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画#}
 
     function checkOrCancelAll(value){
         //1.获取checkbo的元素对象
@@ -269,6 +289,16 @@
         for (let i = 0; i < obj_codec.length; i++) {
                 if (obj_codec[i].checked)
                     index_checkList.push(obj_codec[i].value);
+        }
+        let obj_fallbackRate = document.getElementsByName("fallbackRate");
+        for (let i = 0; i < obj_fallbackRate.length; i++) {
+                if (obj_fallbackRate[i].checked)
+                    index_checkList.push(obj_fallbackRate[i].value);
+        }
+        let obj_cloudCrashRate = document.getElementsByName("cloudCrashRate");
+        for (let i = 0; i < obj_cloudCrashRate.length; i++) {
+                if (obj_cloudCrashRate[i].checked)
+                    index_checkList.push(obj_cloudCrashRate[i].value);
         }
         var params = {
             data:JSON.stringify({
@@ -363,7 +393,11 @@
                  var td13 = document.createElement("th");
                  td13.innerHTML = "回归阶段占比";
                  var td14 = document.createElement("th");
-                 td14.innerHTML = "操作";
+                 td14.innerHTML = "回退率";
+                 var td15 = document.createElement("th");
+                 td15.innerHTML = "云测崩溃率";
+                 var td16 = document.createElement("th");
+                 td16.innerHTML = "操作";
                  tr.appendChild(td1);
                  tr.appendChild(td2);
                  tr.appendChild(td3);
@@ -378,6 +412,8 @@
                  tr.appendChild(td12);
                  tr.appendChild(td13);
                  tr.appendChild(td14);
+                 tr.appendChild(td15);
+                 tr.appendChild(td16);
                  t.appendChild(tr);
                  for (i = 0; i < data.data.length; i++) {
                      var tr2 = document.createElement("tr");
@@ -408,9 +444,12 @@
                      td1212.innerHTML = data.data[i].acceptancePhaseRate;
                      var td1313 = document.createElement("td");
                      td1313.innerHTML = data.data[i].regressionPhaseRate;
-
                      var td1414 = document.createElement("td");
-                     td1414.innerHTML = '<a id="showReportByNo" href="#showReportByVersion-1" data-toggle="modal" data-id="'+data.data[i].version+','+selectDatabase+'">更新|删除';
+                     td1414.innerHTML = data.data[i].fallbackRate;
+                     var td1515 = document.createElement("td");
+                     td1515.innerHTML = data.data[i].cloudCrashRate;
+                     var td1616 = document.createElement("td");
+                     td1616.innerHTML = '<a id="showReportByNo" href="#showReportByVersion-1" data-toggle="modal" data-id="'+data.data[i].version+','+selectDatabase+'">更新|删除';
                      tr2.appendChild(td11);
                      tr2.appendChild(td22);
                      tr2.appendChild(td33);
@@ -425,6 +464,8 @@
                      tr2.appendChild(td1212);
                      tr2.appendChild(td1313);
                      tr2.appendChild(td1414);
+                     tr2.appendChild(td1515);
+                     tr2.appendChild(td1616);
                      t.appendChild(tr2);
                  }
             }
@@ -466,6 +507,8 @@
                 $('#regressionPhase').val(info.regressionPhase);
                 $('#acceptancePhaseRate').val(info.acceptancePhaseRate);
                 $('#regressionPhaseRate').val(info.regressionPhaseRate);
+                $('#fallbackRate').val(info.fallbackRate);
+                $('#cloudCrashRate').val(info.cloudCrashRate);
                 $('#showReportByVersion-1').modal('show');
             }
         });
@@ -503,6 +546,8 @@
 	var regressionPhase = $("#regressionPhase").val();
 	var acceptancePhaseRate = $("#acceptancePhaseRate").val();
 	var regressionPhaseRate = $("#regressionPhaseRate").val();
+	var fallbackRate = $("#fallbackRate").val();
+	var cloudCrashRate = $("#cloudCrashRate").val();
     $.ajax({
         url:'/updateNativeInfo',
         type:'post',
@@ -522,6 +567,8 @@
             regressionPhase:regressionPhase,
             acceptancePhaseRate:acceptancePhaseRate,
             regressionPhaseRate:regressionPhaseRate,
+            fallbackRate:fallbackRate,
+            cloudCrashRate:cloudCrashRate,
 
         },
         error:function(){
@@ -556,6 +603,8 @@
 	var regressionPhase = $("#insert-regressionPhase").val();
 	var acceptancePhaseRate = $("#insert-acceptancePhaseRate").val();
 	var regressionPhaseRate = $("#insert-regressionPhaseRate").val();
+	var fallbackRate = $("#insert-fallbackRate").val();
+	var cloudCrashRate = $("#insert-cloudCrashRate").val();
     $.ajax({
         url:'/insertNativeInfo',
         type:'post',
@@ -575,6 +624,8 @@
             regressionPhase:regressionPhase,
             acceptancePhaseRate:acceptancePhaseRate,
             regressionPhaseRate:regressionPhaseRate,
+            fallbackRate:fallbackRate,
+            cloudCrashRate:cloudCrashRate,
         },
         error:function(){
             alert('出现错误！');
