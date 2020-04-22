@@ -121,7 +121,10 @@ def getSysLogSQL():
 def getRoleByNameSQL(Name):
     cmd = 'SELECT * FROM TestToolRole where Name ='+json.dumps(Name)
     values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd,cursorclass="dict")
-    role = values[0]["Role"]
+    try:
+        role = values[0]["Role"]
+    except:
+        role = "None"
     return role
 
 ##### native mysql #####
@@ -132,7 +135,36 @@ def getNativeVersion():
 
 def getNativePerInfo(version,indexList):
     indexList.append("version")
-    cmd = 'SELECT '+",".join(indexList)+' FROM BUGCOUNT WHERE version in ' + str(tuple(version))
+    cmd = 'SELECT '+",".join(indexList)+' FROM BUGCOUNT WHERE version in ' + str(version).replace("[","(").replace("]",")")
     values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
-    print(values)
     return values
+
+def getNativeInfoSQL(index):
+    cmd = 'SELECT * FROM '+index
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getNativeInfoByVersionSQL(version,index):
+    cmd = 'SELECT * FROM '+index+' where version ='+json.dumps(version)
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def updateNativeInfoByVersionSQL(data):
+    cmd = "update {database[0]} set features={features[0]},total={total[0]},demo={demo[0]},sdk={sdk[0]},video={video[0]}," \
+          "audio={audio[0]},crash={crash[0]},firstTimePassRate={firstTimePassRate[0]},acceptancePhase={acceptancePhase[0]},regressionPhase={regressionPhase[0]},acceptancePhaseRate={acceptancePhaseRate[0]},regressionPhaseRate={regressionPhaseRate[0]} where version='{version[0]}'".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
+
+def insertNativeInfoByVersionSQL(data):
+    cmd = "INSERT INTO {database[0]} set version='{version[0]}',features={features[0]},total={total[0]},demo={demo[0]},sdk={sdk[0]},video={video[0]}," \
+          "audio={audio[0]},crash={crash[0]},firstTimePassRate={firstTimePassRate[0]},acceptancePhase={acceptancePhase[0]},regressionPhase={regressionPhase[0]},acceptancePhaseRate={acceptancePhaseRate[0]},regressionPhaseRate={regressionPhaseRate[0]}".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
+
+def deleteNativeInfoByVersionSQL(data):
+    cmd = "DELETE FROM {database[0]} where version='{version[0]}'".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res

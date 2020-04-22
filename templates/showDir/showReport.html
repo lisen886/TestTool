@@ -192,6 +192,10 @@
         data:[]
     },
     toolbox: {
+        orient: 'vertical',
+        backgroundColor: 'rgba(0,0,0,0)', // 工具箱背景颜色
+        borderColor: '#ccc',       // 工具箱边框颜色
+        y: 'center',
         feature: {
             dataZoom: {
                yAxisIndex: 'none'
@@ -206,7 +210,7 @@
     grid: {
         left: '3%',
         right: '3%',
-        top:"5%",
+        top:"15%",
         bottom: '5%',// 控制图表上下左右的空白尺寸
         containLabel: true, //自适应画布大小
     },

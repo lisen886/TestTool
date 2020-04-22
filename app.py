@@ -450,5 +450,62 @@ def showNativeQearyResult():
     content = json.dumps(datas)
     resp = Response_headers(content)
     return resp
+
+@app.route('/getNativeInfo',methods=['POST','GET'])
+def getNativeInfo():
+    selectDatabase = request.form.get('selectDatabase')
+    data = getNativeInfoSQL(selectDatabase)
+    return jsonify({'status': 200, 'data': data})
+
+@app.route ('/getNativeInfoByVersion',methods=['POST','GET'])
+def getNativeInfoByVersion():
+    version = request.form.get('version')
+    index = request.form.get('index')
+    data = getNativeInfoByVersionSQL(version,index)
+    return jsonify({'status': 200, 'data': data})
+
+@app.route ('/updateNativeInfo',methods=['POST','GET'])
+def updateNativeInfo():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = updateNativeInfoByVersionSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
+
+@app.route ('/insertNativeInfo',methods=['POST','GET'])
+def insertNativeInfo():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = insertNativeInfoByVersionSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
+
+
+@app.route ('/deleteNativeInfo',methods=['POST','GET'])
+def deleteNativeInfo():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = deleteNativeInfoByVersionSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)

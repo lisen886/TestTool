@@ -71,27 +71,20 @@
 </div>
 <div class="col-md-12 column">
     <div class="modal fade" id="modal-container-showReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="width:1100px">
             <div class="modal-content">
                 <div class="modal-header">
                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <div class="form-group">
                         <select id="selectDatabase" class="selectpicker show-tick" title="请选择一项" data-live-search="true" data-size="5">
-                            <option>内存</option>
-                            <option>CPU</option>
-                            <option>首帧出图</option>
-                            <option>视频延时</option>
-                            <option>视频卡顿率</option>
-                            <option>音频延时</option>
-                            <option>音频抗丢包边界</option>
-                            <option>音画同步</option>
+                            <option>BugCount</option>
                         </select>
-                        <button type="button" class="btn btn-primary" id="btn_add" href="#insert-showReport-1" data-toggle="modal">新增</button>
+                        <button type="button" class="btn btn-primary" id="btn_add" href="#insert-native-showReport-1" data-toggle="modal">新增</button>
 				    </div>
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed" id="show">
-                        <tbody id="showbody">
+                        <tbody id="showbodynative">
                         </tbody>
                     </table>
                 </div>
@@ -99,7 +92,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="showReportByNo-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="showReportByVersion-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -110,24 +103,31 @@
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed">
-                        No：<input type="text" name="No" id="showReportByNoNo" /><p></p>
-                        version：<input type="text" name="version" id="showReportByNoVersion" /><p></p>
-                        browser：<input type="text" name="browser" id="showReportByNoBrowser"/><p></p>
-                        mode：<input type="text" name="mode" id="showReportByNoMode"><p></p>
-                        codec：<input type="text" name="codec" id="showReportByNoCodec"><p></p>
-                        value：<input type="text" name="value" id="showReportByNoValue"><p></p>
+                        version：<input type="text" name="version" id="version" /><p></p>
+                        features：<input type="text" name="browser" id="features"/><p></p>
+                        total：<input type="text" name="mode" id="total"><p></p>
+                        demo：<input type="text" name="codec" id="demo"><p></p>
+                        sdk：<input type="text" name="value" id="sdk"><p></p>
+                        video：<input type="text" name="value" id="video"><p></p>
+                        audio：<input type="text" name="value" id="audio"><p></p>
+                        crash：<input type="text" name="value" id="crash"><p></p>
+                        firstTimePassRate：<input type="text" name="value" id="firstTimePassRate"><p></p>
+                        acceptancePhase：<input type="text" name="value" id="acceptancePhase"><p></p>
+                        regressionPhase：<input type="text" name="value" id="regressionPhase"><p></p>
+                        acceptancePhaseRate：<input type="text" name="value" id="acceptancePhaseRate"><p></p>
+                        regressionPhaseRate：<input type="text" name="value" id="regressionPhaseRate"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="updateWebRTC()">更新</button>
-                    <button type="button" class="btn btn-primary" onclick="my_confirm(deleteWebRTC,'','确认是否删除')">删除</button>
+                    <button type="button" class="btn btn-primary" onclick="updateNative()">更新</button>
+                    <button type="button" class="btn btn-primary" onclick="my_confirm(deleteNative,'','确认是否删除')">删除</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="insert-showReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="insert-native-showReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:1100px">
             <div class="modal-content">
                 <div class="modal-header">
                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -138,16 +138,23 @@
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed">
                         Index：<input type="text" id="insertIndex" disabled="disabled"/><p></p>
-                        No：<input type="text" name="No" id="insertNo" disabled="disabled" value="主键可自动生成"/><p></p>
-                        version：<input type="text" name="version" id="insertVersion" /><p></p>
-                        browser：<input type="text" name="browser" id="insertBrowser"/><p></p>
-                        mode：<input type="text" name="mode" id="insertMode"><p></p>
-                        codec：<input type="text" name="codec" id="insertCodec"><p></p>
-                        value：<input type="text" name="value" id="insertValue"><p></p>
+                        version：<input type="text" name="version" id="insert-version"/><p></p>
+                        features：<input type="text" name="browser" id="insert-features"/><p></p>
+                        total：<input type="text" name="mode" id="insert-total"><p></p>
+                        demo：<input type="text" name="codec" id="insert-demo"><p></p>
+                        sdk：<input type="text" name="value" id="insert-sdk"><p></p>
+                        video：<input type="text" name="value" id="insert-video"><p></p>
+                        audio：<input type="text" name="value" id="insert-audio"><p></p>
+                        crash：<input type="text" name="value" id="insert-crash"><p></p>
+                        firstTimePassRate：<input type="text" name="value" id="insert-firstTimePassRate"><p></p>
+                        acceptancePhase：<input type="text" name="value" id="insert-acceptancePhase"><p></p>
+                        regressionPhase：<input type="text" name="value" id="insert-regressionPhase"><p></p>
+                        acceptancePhaseRate：<input type="text" name="value" id="insert-acceptancePhaseRate"><p></p>
+                        regressionPhaseRate：<input type="text" name="value" id="insert-regressionPhaseRate"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="insertWebRTC()">新增</button>
+                    <button type="button" class="btn btn-primary" onclick="insertNative()">新增</button>
                 </div>
             </div>
         </div>
@@ -177,6 +184,10 @@
         data:[]
     },
     toolbox: {
+        orient: 'vertical',
+        backgroundColor: 'rgba(0,0,0,0)', // 工具箱背景颜色
+        borderColor: '#ccc',       // 工具箱边框颜色
+        y: 'center',
         feature: {
             dataZoom: {
                yAxisIndex: 'none'
@@ -191,7 +202,7 @@
     grid: {
         left: '3%',
         right: '3%',
-        top:"5%",
+        top:"15%",
         bottom: '5%',// 控制图表上下左右的空白尺寸
         containLabel: true, //自适应画布大小
     },
@@ -313,7 +324,7 @@
         selectDatabase = s.options[s.selectedIndex].text;
         $.ajax({
              type : "post",
-             url : "/getWebRTCInfo",    //请求发送到Servlet处
+             url : "/getNativeInfo",    //请求发送到Servlet处
              dataType : "json",        //返回数据形式为json
              data:{
                  selectDatabase:selectDatabase
@@ -323,22 +334,36 @@
                     myChart.hideLoading();
                 },success:function (data){
                 $("#show tbody").html("");
-                 var t = document.getElementById("showbody");
+                 var t = document.getElementById("showbodynative");
                  var tr = document.createElement("tr");
                  var td1 = document.createElement("th");
-                 td1.innerHTML = "No";
+                 td1.innerHTML = "版本";
                  var td2 = document.createElement("th");
-                 td2.innerHTML = "version";
+                 td2.innerHTML = "feature数";
                  var td3 = document.createElement("th");
-                 td3.innerHTML = "browser";
+                 td3.innerHTML = "total";
                  var td4 = document.createElement("th");
-                 td4.innerHTML = "mode";
+                 td4.innerHTML = "demo";
                  var td5 = document.createElement("th");
-                 td5.innerHTML = "codec";
+                 td5.innerHTML = "sdk";
                  var td6 = document.createElement("th");
-                 td6.innerHTML = "value";
+                 td6.innerHTML = "video";
                  var td7 = document.createElement("th");
-                 td7.innerHTML = "operate";
+                 td7.innerHTML = "audio";
+                 var td8 = document.createElement("th");
+                 td8.innerHTML = "crash";
+                 var td9 = document.createElement("th");
+                 td9.innerHTML = "一次通过率";
+                 var td10 = document.createElement("th");
+                 td10.innerHTML = "验收阶段";
+                 var td11 = document.createElement("th");
+                 td11.innerHTML = "回归阶段";
+                 var td12 = document.createElement("th");
+                 td12.innerHTML = "验收阶段占比";
+                 var td13 = document.createElement("th");
+                 td13.innerHTML = "回归阶段占比";
+                 var td14 = document.createElement("th");
+                 td14.innerHTML = "操作";
                  tr.appendChild(td1);
                  tr.appendChild(td2);
                  tr.appendChild(td3);
@@ -346,24 +371,46 @@
                  tr.appendChild(td5);
                  tr.appendChild(td6);
                  tr.appendChild(td7);
+                 tr.appendChild(td8);
+                 tr.appendChild(td9);
+                 tr.appendChild(td10);
+                 tr.appendChild(td11);
+                 tr.appendChild(td12);
+                 tr.appendChild(td13);
+                 tr.appendChild(td14);
                  t.appendChild(tr);
                  for (i = 0; i < data.data.length; i++) {
                      var tr2 = document.createElement("tr");
                      var td11 = document.createElement("td");
-                     td11.innerHTML = data.data[i].No;
+                     td11.innerHTML = data.data[i].version;
                      var td22 = document.createElement("td");
-                     td22.innerHTML = data.data[i].version;
+                     td22.innerHTML = data.data[i].features;
                      var td33 = document.createElement("td");
-                     td33.innerHTML = data.data[i].browser;
+                     td33.innerHTML = data.data[i].total;
                      var td44 = document.createElement("td");
-                     td44.innerHTML = data.data[i].mode;
+                     td44.innerHTML = data.data[i].demo;
                      var td55 = document.createElement("td");
-                     td55.innerHTML = data.data[i].codec;
+                     td55.innerHTML = data.data[i].sdk;
                      var td66 = document.createElement("td");
-                     td66.innerHTML = data.data[i].value;
+                     td66.innerHTML = data.data[i].video;
+
                      var td77 = document.createElement("td");
-                     {#td77.innerHTML = '<a href="/del?No='+data.data[i].No +'&selectDatabase='+selectDatabase+'"'+'>删除</a> | <a href="/cha?No='+data.data[i].No +'&selectDatabase='+selectDatabase+'"'+'>更改</a>';#}
-                     td77.innerHTML = '<a id="showReportByNo" href="#showReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
+                     td77.innerHTML = data.data[i].audio;
+                     var td88 = document.createElement("td");
+                     td88.innerHTML = data.data[i].crash;
+                     var td99 = document.createElement("td");
+                     td99.innerHTML = data.data[i].firstTimePassRate;
+                     var td1010 = document.createElement("td");
+                     td1010.innerHTML = data.data[i].acceptancePhase;
+                     var td1111 = document.createElement("td");
+                     td1111.innerHTML = data.data[i].regressionPhase;
+                     var td1212 = document.createElement("td");
+                     td1212.innerHTML = data.data[i].acceptancePhaseRate;
+                     var td1313 = document.createElement("td");
+                     td1313.innerHTML = data.data[i].regressionPhaseRate;
+
+                     var td1414 = document.createElement("td");
+                     td1414.innerHTML = '<a id="showReportByNo" href="#showReportByVersion-1" data-toggle="modal" data-id="'+data.data[i].version+','+selectDatabase+'">更新|删除';
                      tr2.appendChild(td11);
                      tr2.appendChild(td22);
                      tr2.appendChild(td33);
@@ -371,6 +418,13 @@
                      tr2.appendChild(td55);
                      tr2.appendChild(td66);
                      tr2.appendChild(td77);
+                     tr2.appendChild(td88);
+                     tr2.appendChild(td99);
+                     tr2.appendChild(td1010);
+                     tr2.appendChild(td1111);
+                     tr2.appendChild(td1212);
+                     tr2.appendChild(td1313);
+                     tr2.appendChild(td1414);
                      t.appendChild(tr2);
                  }
             }
@@ -382,43 +436,50 @@
     });
 
     var cateid = 0;
-    $('#showReportByNo-1').on('shown.bs.modal', function (event) {
+    $('#showReportByVersion-1').on('shown.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         cateid = button.data('id').split(",");
-        No = cateid[0];
+        version = cateid[0];
         index = cateid[1];
         $.ajax({
-            url:'/cha',
+            url:'/getNativeInfoByVersion',
             type:'post',
             dataType: 'json',
             data:{
-                No:No,
+                version:version,
                 index:index
             },
             error:function(){
                 alert('出现错误！');
             },success:function (data){
                 let info = data.data[0];
-                $('#showReportByNoNo').val(info.No);
-                $('#showReportByNoVersion').val(info.version);
-                $('#showReportByNoBrowser').val(info.browser);
-                $('#showReportByNoMode').val(info.mode);
-                $('#showReportByNoCodec').val(info.codec);
-                $('#showReportByNoValue').val(info.value);
-                $('#showReportByNo-1').modal('show');
+                $('#version').val(info.version);
+                $('#features').val(info.features);
+                $('#total').val(info.total);
+                $('#demo').val(info.demo);
+                $('#sdk').val(info.sdk);
+                $('#video').val(info.video);
+                $('#audio').val(info.audio);
+                $('#crash').val(info.crash);
+                $('#firstTimePassRate').val(info.firstTimePassRate);
+                $('#acceptancePhase').val(info.acceptancePhase);
+                $('#regressionPhase').val(info.regressionPhase);
+                $('#acceptancePhaseRate').val(info.acceptancePhaseRate);
+                $('#regressionPhaseRate').val(info.regressionPhaseRate);
+                $('#showReportByVersion-1').modal('show');
             }
         });
     });
 
-    $('#insert-showReport-1').on('shown.bs.modal', function () {
+    $('#insert-native-showReport-1').on('shown.bs.modal', function () {
         let value = $("#selectDatabase option:selected").val();
         if (value){
             $('#insertIndex').val(value);
-            $('#insert-showReport-1').modal('show');
+            $('#insert-native-showReport-1').modal('show');
         } else
         {
             my_showTip("请选择一项需要更新的数据表");
-            $('#insert-showReport-1').modal('hide');
+            $('#insert-native-showReport-1').modal('hide');
         }
     });
 
@@ -426,33 +487,48 @@
         location.reload();
     });
 
-    function updateWebRTC() {
+    function updateNative() {
     var s = document.getElementById("selectDatabase");
     var selectDatabase = s.options[s.selectedIndex].text;
-    var No = $("#showReportByNoNo").val();
-	var version = $("#showReportByNoVersion").val();
-	var browser = $("#showReportByNoBrowser").val();
-	var mode = $("#showReportByNoMode").val();
-	var codec = $("#showReportByNoCodec").val();
-	var value = $("#showReportByNoValue").val();
+    var version = $("#version").val();
+	var features = $("#features").val();
+	var total = $("#total").val();
+	var demo = $("#demo").val();
+	var sdk = $("#sdk").val();
+	var video = $("#video").val();
+	var audio = $("#audio").val();
+	var crash = $("#crash").val();
+	var firstTimePassRate = $("#firstTimePassRate").val();
+	var acceptancePhase = $("#acceptancePhase").val();
+	var regressionPhase = $("#regressionPhase").val();
+	var acceptancePhaseRate = $("#acceptancePhaseRate").val();
+	var regressionPhaseRate = $("#regressionPhaseRate").val();
     $.ajax({
-        url:'/updateWebRTCInfo',
+        url:'/updateNativeInfo',
         type:'post',
         dataType: 'json',
         data:{
-            No:No,
-            version:version,
-            browser:browser,
-            mode:mode,
-            codec:codec,
-            value:value,
             database:selectDatabase,
+            version:version,
+            features:features,
+            total:total,
+            demo:demo,
+            sdk:sdk,
+            video:video,
+            audio:audio,
+            crash:crash,
+            firstTimePassRate:firstTimePassRate,
+            acceptancePhase:acceptancePhase,
+            regressionPhase:regressionPhase,
+            acceptancePhaseRate:acceptancePhaseRate,
+            regressionPhaseRate:regressionPhaseRate,
+
         },
         error:function(){
             alert('出现错误！');
         },success:function (data){
             if(data.status == 200){
-                $('#showReportByNo-1').modal('hide');
+                $('#showReportByVersion-1').modal('hide');
                 genTable();
                 {#location.reload();#}
             }else {
@@ -464,31 +540,47 @@
     })
 }
 
-    function insertWebRTC() {
+    function insertNative() {
     var s = document.getElementById("insertIndex");
     var selectDatabase = s.value;
-	var version = $("#insertVersion").val();
-	var browser = $("#insertBrowser").val();
-	var mode = $("#insertMode").val();
-	var codec = $("#insertCodec").val();
-	var value = $("#insertValue").val();
+	var version = $("#insert-version").val();
+	var features = $("#insert-features").val();
+	var total = $("#insert-total").val();
+	var demo = $("#insert-demo").val();
+	var sdk = $("#insert-sdk").val();
+	var video = $("#insert-video").val();
+	var audio = $("#insert-audio").val();
+	var crash = $("#insert-crash").val();
+	var firstTimePassRate = $("#insert-firstTimePassRate").val();
+	var acceptancePhase = $("#insert-acceptancePhase").val();
+	var regressionPhase = $("#insert-regressionPhase").val();
+	var acceptancePhaseRate = $("#insert-acceptancePhaseRate").val();
+	var regressionPhaseRate = $("#insert-regressionPhaseRate").val();
     $.ajax({
-        url:'/insertWebRTCInfo',
+        url:'/insertNativeInfo',
         type:'post',
         dataType: 'json',
         data:{
-            version:version,
-            browser:browser,
-            mode:mode,
-            codec:codec,
-            value:value,
             database:selectDatabase,
+            version:version,
+            features:features,
+            total:total,
+            demo:demo,
+            sdk:sdk,
+            video:video,
+            audio:audio,
+            crash:crash,
+            firstTimePassRate:firstTimePassRate,
+            acceptancePhase:acceptancePhase,
+            regressionPhase:regressionPhase,
+            acceptancePhaseRate:acceptancePhaseRate,
+            regressionPhaseRate:regressionPhaseRate,
         },
         error:function(){
             alert('出现错误！');
         },success:function (data){
             if(data.status == 200){
-                $('#insert-showReport-1').modal('hide');
+                $('#insert-native-showReport-1').modal('hide');
                 genTable();
             }else {
                 {#alert("无法更新配置信息！！！")#}
@@ -499,23 +591,23 @@
     })
 }
 
-    function deleteWebRTC() {
+    function deleteNative() {
         var s = document.getElementById("selectDatabase");
         var selectDatabase = s.options[s.selectedIndex].text;
-        var No = $("#showReportByNoNo").val();
+        var version = $("#version").val();
         $.ajax({
-        url:'/deleteWebRTCInfo',
+        url:'/deleteNativeInfo',
         type:'post',
         dataType: 'json',
         data:{
-            No:No,
+            version:version,
             database:selectDatabase,
         },
         error:function(){
             alert('出现错误！');
         },success:function (data){
             if(data.status == 200){
-                $('#showReportByNo-1').modal('hide');
+                $('#showReportByVersion-1').modal('hide');
                 genTable();
                 {#location.reload();#}
             }else {
