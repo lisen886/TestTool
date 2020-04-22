@@ -135,7 +135,7 @@ def getNativeVersion():
 
 def getNativePerInfo(version,indexList):
     indexList.append("version")
-    cmd = 'SELECT '+",".join(indexList)+' FROM BUGCOUNT WHERE version in ' + str(version).replace("[","(").replace("]",")")
+    cmd = 'SELECT '+",".join(indexList)+' FROM BugCount Where version in ' + str(version).replace("[","(").replace("]",")")
     values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
     return values
 
