@@ -307,7 +307,11 @@
             })
 
         };
-        $.ajax({
+        if (index_checkList.length ==0 || version_native_checkList.length ==0){
+            my_showTip("请选择需要查看的指标！！！")
+        }
+        else {
+            $.ajax({
              type : "post",
              url : "/showNativeQearyResult",    //请求发送到Servlet处
              dataType : "json",        //返回数据形式为json
@@ -346,6 +350,7 @@
                     }
                 }
         });
+        }
 
     }
 

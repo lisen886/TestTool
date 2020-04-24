@@ -285,10 +285,16 @@
                 if (obj_index[i].checked)
                     index_checkList.push(obj_index[i].value);
         }
-        if (index_checkList.length ==0){
-            alert("请选择正确的指标！！！")
+        if (index_checkList.length ==0 || version_checkList.length ==0 || browser_checkList.length==0 || mode_checkList.length==0 || codec_checkList.length==0){
+            my_showTip("多重条件查询，请选择条件例如：&#10;" +
+                "Version:2.4.0&#10;" +
+                "Browser:chrome&#10;" +
+                "Mode:live&#10;" +
+                "Codec:h264&#10;" +
+                "Index:CPU")
         }
-        $.ajax({
+        else {
+            $.ajax({
              type : "post",
              url : "/showQearyResult",    //请求发送到Servlet处
              dataType : "json",        //返回数据形式为json
@@ -333,7 +339,7 @@
                     }
                 }
         });
-
+        }
     }
 
     function genTable(){
