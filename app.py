@@ -321,6 +321,10 @@ def showQearyResult():
                         if browser in value and mode in value and codec in value:
                             new_xlist.append(value[1])
                             new_value.append(value[5])
+                    if new_xlist:
+                        new_xlist=new_xlist
+                    else:
+                        new_xlist=json.loads(version_checkList)
                     new_data.append({"name":"_".join([key,browser,mode,codec]),
                                      "data":new_value,
                                      "xcontent":new_xlist
