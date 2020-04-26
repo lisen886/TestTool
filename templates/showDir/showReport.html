@@ -125,12 +125,12 @@
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed">
-                        No：<input type="text" name="No" id="showReportByNoNo" /><p></p>
-                        version：<input type="text" name="version" id="showReportByNoVersion" /><p></p>
-                        browser：<input type="text" name="browser" id="showReportByNoBrowser"/><p></p>
-                        mode：<input type="text" name="mode" id="showReportByNoMode"><p></p>
-                        codec：<input type="text" name="codec" id="showReportByNoCodec"><p></p>
-                        value：<input type="text" name="value" id="showReportByNoValue"><p></p>
+                        No：<input type="text" id="showReportByNoNo" /><p></p>
+                        version：<input type="text" id="showReportByNoVersion" /><p></p>
+                        browser：<input type="text" id="showReportByNoBrowser"/><p></p>
+                        mode：<input type="text" id="showReportByNoMode"><p></p>
+                        codec：<input type="text" id="showReportByNoCodec"><p></p>
+                        value：<input type="text" id="showReportByNoValue"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -153,12 +153,12 @@
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed">
                         Index：<input type="text" id="insertIndex" disabled="disabled"/><p></p>
-                        No：<input type="text" name="No" id="insertNo" disabled="disabled" value="主键可自动生成"/><p></p>
-                        version：<input type="text" name="version" id="insertVersion" /><p></p>
-                        browser：<input type="text" name="browser" id="insertBrowser"/><p></p>
-                        mode：<input type="text" name="mode" id="insertMode"><p></p>
-                        codec：<input type="text" name="codec" id="insertCodec"><p></p>
-                        value：<input type="text" name="value" id="insertValue"><p></p>
+                        No：<input type="text" id="insertNo" disabled="disabled" value="主键可自动生成"/><p></p>
+                        version：<input type="text" id="insertVersion" /><p></p>
+                        browser：<input type="text" id="insertBrowser"/><p></p>
+                        mode：<input type="text" id="insertMode"><p></p>
+                        codec：<input type="text" id="insertCodec"><p></p>
+                        value：<input type="text" id="insertValue"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -276,6 +276,7 @@
                     mode_checkList.push(obj_mode[i].value);
         }
         let obj_codec = document.getElementsByName("codec");
+        console.log(obj_codec)
         for (let i = 0; i < obj_codec.length; i++) {
                 if (obj_codec[i].checked)
                     codec_checkList.push(obj_codec[i].value);
@@ -331,7 +332,13 @@
                             it.data = json[i].data;
                             Series.push(it);
                         }
-                        option.xAxis[0].data = json[0].xcontent;
+                        try {
+                            option.xAxis[0].data = json[0].xcontent;
+                        }
+                        catch (e) {
+                            console.log(e);
+                            my_showTip("请检查查询组合是否存在异常")
+                        }
                         option.legend.data = legends;
                         option.series = Series; // 设置图表
                         myChart.hideLoading();    //隐藏加载动画
