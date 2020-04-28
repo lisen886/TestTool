@@ -67,9 +67,9 @@
                             <input type="checkbox" name="index" value="CPU">&nbsp;CPU&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="首帧出图">&nbsp;首帧出图&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="视频延时">&nbsp;视频延时&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="视频卡顿率">&nbsp;视频卡顿率&nbsp;&nbsp;
+                            <input type="checkbox" name="index" value="视频卡顿率" disabled="disabled">&nbsp;视频卡顿率&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="音频延时">&nbsp;音频延时&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="音频抗丢包边界">&nbsp;音频抗丢包边界&nbsp;&nbsp;
+                            <input type="checkbox" name="index" value="音频抗丢包边界" disabled="disabled">&nbsp;音频抗丢包边界&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="音画同步">&nbsp;音画同步&nbsp;&nbsp;
                         </td>
 					</tr>
@@ -131,6 +131,7 @@
                         mode：<input type="text" id="showReportByNoMode"><p></p>
                         codec：<input type="text" id="showReportByNoCodec"><p></p>
                         value：<input type="text" id="showReportByNoValue"><p></p>
+                        extend：<input type="text" id="showReportByNoExtend"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -159,6 +160,7 @@
                         mode：<input type="text" id="insertMode"><p></p>
                         codec：<input type="text" id="insertCodec"><p></p>
                         value：<input type="text" id="insertValue"><p></p>
+                        extend：<input type="text" id="insertExtend"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -378,7 +380,9 @@
                  var td6 = document.createElement("th");
                  td6.innerHTML = "value";
                  var td7 = document.createElement("th");
-                 td7.innerHTML = "operate";
+                 td7.innerHTML = "extend";
+                 var td8 = document.createElement("th");
+                 td8.innerHTML = "operate";
                  tr.appendChild(td1);
                  tr.appendChild(td2);
                  tr.appendChild(td3);
@@ -386,6 +390,7 @@
                  tr.appendChild(td5);
                  tr.appendChild(td6);
                  tr.appendChild(td7);
+                 tr.appendChild(td8);
                  t.appendChild(tr);
                  for (i = 0; i < data.data.length; i++) {
                      var tr2 = document.createElement("tr");
@@ -402,8 +407,9 @@
                      var td66 = document.createElement("td");
                      td66.innerHTML = data.data[i].value;
                      var td77 = document.createElement("td");
-                     {#td77.innerHTML = '<a href="/del?No='+data.data[i].No +'&selectDatabase='+selectDatabase+'"'+'>删除</a> | <a href="/cha?No='+data.data[i].No +'&selectDatabase='+selectDatabase+'"'+'>更改</a>';#}
-                     td77.innerHTML = '<a id="showReportByNo" href="#showReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
+                     td77.innerHTML = data.data[i].extend;
+                     var td88 = document.createElement("td");
+                     td88.innerHTML = '<a id="showReportByNo" href="#showReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
                      tr2.appendChild(td11);
                      tr2.appendChild(td22);
                      tr2.appendChild(td33);
@@ -411,6 +417,7 @@
                      tr2.appendChild(td55);
                      tr2.appendChild(td66);
                      tr2.appendChild(td77);
+                     tr2.appendChild(td88);
                      t.appendChild(tr2);
                  }
             }
@@ -445,6 +452,7 @@
                 $('#showReportByNoMode').val(info.mode);
                 $('#showReportByNoCodec').val(info.codec);
                 $('#showReportByNoValue').val(info.value);
+                $('#showReportByNoExtend').val(info.extend);
                 $('#showReportByNo-1').modal('show');
             }
         });
@@ -475,6 +483,7 @@
 	var mode = $("#showReportByNoMode").val();
 	var codec = $("#showReportByNoCodec").val();
 	var value = $("#showReportByNoValue").val();
+	var extend = $("#showReportByNoExtend").val();
     $.ajax({
         url:'/updateWebRTCInfo',
         type:'post',
@@ -486,6 +495,7 @@
             mode:mode,
             codec:codec,
             value:value,
+            extend:extend,
             database:selectDatabase,
         },
         error:function(){
@@ -512,6 +522,7 @@
 	var mode = $("#insertMode").val();
 	var codec = $("#insertCodec").val();
 	var value = $("#insertValue").val();
+	var extend = $("#insertExtend").val();
     $.ajax({
         url:'/insertWebRTCInfo',
         type:'post',
@@ -522,6 +533,7 @@
             mode:mode,
             codec:codec,
             value:value,
+            extend:extend,
             database:selectDatabase,
         },
         error:function(){

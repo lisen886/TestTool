@@ -51,7 +51,7 @@ def getPerKeyInfo():
     browserList = []
     modeList = []
     codecList = []
-    for No,version,browser,mode,codec,value in values:
+    for No,version,browser,mode,codec,value,extend in values:
         versionList.append(version)
         browserList.append(browser)
         modeList.append(mode)
@@ -91,13 +91,13 @@ def getWebRTCInfoByNoSQL(No,index):
     return values
 
 def updateWebRTCInfoByNoSQL(data):
-    cmd = "update {database[0]} set version='{version[0]}',browser='{browser[0]}',mode='{mode[0]}',codec='{codec[0]}',value={value[0]} where No={No[0]}".format(**data)
+    cmd = "update {database[0]} set version='{version[0]}',browser='{browser[0]}',mode='{mode[0]}',codec='{codec[0]}',value={value[0]},extend='{extend[0]}' where No={No[0]}".format(**data)
     res = mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
     addTestToolLogSerever(session.get('username'), cmd)
     return res
 
 def insertWebRTCInfoByNoSQL(data):
-    cmd = "INSERT INTO {database[0]} set version='{version[0]}',browser='{browser[0]}',mode='{mode[0]}',codec='{codec[0]}',value={value[0]}".format(**data)
+    cmd = "INSERT INTO {database[0]} set version='{version[0]}',browser='{browser[0]}',mode='{mode[0]}',codec='{codec[0]}',value={value[0]},extend='{extend[0]}'".format(**data)
     res = mysql_update(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
     addTestToolLogSerever(session.get('username'), cmd)
     return res
