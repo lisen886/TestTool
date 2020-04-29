@@ -92,10 +92,13 @@ def getPerKeyInfo():
     keyInfo['codec'] = list(sorted(set(codecList)))
     return keyInfo
 
-def getPerInfo(table_index,version,browser,mode,codec):
+def getPerInfo(table_index,version,browser,mode,codec,extend):
     valueDict = {}
     for table in json.loads(table_index):
-        cmd = 'SELECT * FROM ' + table + ' WHERE version in ' + version.replace("[","(").replace("]",")") +' and browser in ' + browser.replace("[","(").replace("]",")")+' and mode in ' + mode.replace("[","(").replace("]",")")+' and codec in ' + codec.replace("[","(").replace("]",")" + 'ORDER BY version asc')
+        if table == "视频卡顿率":
+            cmd = 'SELECT * FROM ' + table + ' WHERE version in ' + version.replace("[", "(").replace("]",")") + ' and browser in ' + browser.replace("[", "(").replace("]", ")") + ' and mode in ' + mode.replace("[", "(").replace("]",")") + ' and codec in ' + codec.replace("[", "(").replace("]", ")") + ' and extend in ' + extend.replace("[", "(").replace("]",")") + 'ORDER BY version asc'
+        else:
+            cmd = 'SELECT * FROM ' + table + ' WHERE version in ' + version.replace("[","(").replace("]",")") +' and browser in ' + browser.replace("[","(").replace("]",")")+' and mode in ' + mode.replace("[","(").replace("]",")")+' and codec in ' + codec.replace("[","(").replace("]",")") + 'ORDER BY version asc'
         values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd=cmd)
         valueDict[table]=values
     return valueDict

@@ -307,28 +307,47 @@ def showQearyResult():
     mode_checkList = request.form.get('mode_check')
     codec_checkList = request.form.get('codec_check')
     index_checkList = request.form.get('index_check')
-    info_dict = getPerInfo(index_checkList,version_checkList,browser_checkList,mode_checkList,codec_checkList)
+    extend_check = request.form.get('extend_check')
+    info_dict = getPerInfo(index_checkList,version_checkList,browser_checkList,mode_checkList,codec_checkList,extend_check)
     new_data = []
-    for browser in json.loads(browser_checkList):
-        for mode in json.loads(mode_checkList):
-            for codec in json.loads(codec_checkList):
-                if browser == 'safari' and codec == "vp8":
-                    continue
-                for key in info_dict.keys():
-                    new_xlist = []
-                    new_value = []
-                    for value in info_dict[key]:
-                        if browser in value and mode in value and codec in value:
-                            new_xlist.append(value[1])
-                            new_value.append(value[5])
-                    if new_xlist:
-                        new_xlist=new_xlist
+    for key in info_dict.keys():
+        for browser in json.loads(browser_checkList):
+            for mode in json.loads(mode_checkList):
+                for codec in json.loads(codec_checkList):
+                    if browser == 'safari' and codec == "vp8":
+                        continue
+                    if key == "视频卡顿率":
+                        for extend in json.loads(extend_check):
+                            new_xlist = []
+                            new_value = []
+                            for value in info_dict[key]:
+                                if browser in value and mode in value and codec in value and extend in value:
+                                    new_xlist.append(value[1])
+                                    new_value.append(value[5])
+                            if new_xlist:
+                                new_xlist = new_xlist
+                            else:
+                                new_xlist = json.loads(version_checkList)
+                            new_data.append({"name": "_".join([key, browser, mode, codec, extend]),
+                                             "data": new_value,
+                                             "xcontent": new_xlist
+                                             })
                     else:
-                        new_xlist=json.loads(version_checkList)
-                    new_data.append({"name":"_".join([key,browser,mode,codec]),
-                                     "data":new_value,
-                                     "xcontent":new_xlist
-                                     })
+                        new_xlist = []
+                        new_value = []
+                        for value in info_dict[key]:
+                            if browser in value and mode in value and codec in value:
+                                new_xlist.append(value[1])
+                                new_value.append(value[5])
+                        if new_xlist:
+                            new_xlist = new_xlist
+                        else:
+                            new_xlist = json.loads(version_checkList)
+                        new_data.append({"name": "_".join([key, browser, mode, codec]),
+                                         "data": new_value,
+                                         "xcontent": new_xlist
+                                         })
+
 
     datas = {
         "data": new_data

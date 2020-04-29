@@ -67,10 +67,31 @@
                             <input type="checkbox" name="index" value="CPU">&nbsp;CPU&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="首帧出图">&nbsp;首帧出图&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="视频延时">&nbsp;视频延时&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="视频卡顿率" disabled="disabled">&nbsp;视频卡顿率&nbsp;&nbsp;
+                            <input type="checkbox" name="index" value="视频卡顿率" onclick="checkLossRate(this)" id="lossRate">&nbsp;视频卡顿率&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="音频延时">&nbsp;音频延时&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="音频抗丢包边界" disabled="disabled">&nbsp;音频抗丢包边界&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="音画同步">&nbsp;音画同步&nbsp;&nbsp;
+                        </td>
+					</tr>
+                    <tr id="network_extend" style="display: none">
+                        <td>
+                            网损条件：
+                        </td>
+						<td>
+                            <input type="checkbox" id="networkCondition" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;<br>
+                            <input type="checkbox" name="networkCondition" value="500K_0%_200ms">&nbsp;500K_0%_200ms&nbsp;&nbsp;
+                            <input type="checkbox" name="networkCondition" value="500K_0%_300ms">&nbsp;500K_0%_300ms&nbsp;&nbsp;
+                            <input type="checkbox" name="networkCondition" value="500K_0%_600ms">&nbsp;500K_0%_600ms&nbsp;&nbsp;<br>
+                            <input type="checkbox" name="networkCondition" value="500K_20%_200ms">&nbsp;500K_20%_200ms&nbsp;&nbsp;
+                            <input type="checkbox" name="networkCondition" value="500K_20%_300ms">&nbsp;500K_20%_300ms&nbsp;&nbsp;
+                            <input type="checkbox" name="networkCondition" value="500K_20%_600ms">&nbsp;500K_20%_600ms&nbsp;&nbsp;<br>
+                            <input type="checkbox" name="networkCondition" value="800K_0%_200ms">&nbsp;800K_0%_200ms&nbsp;&nbsp;
+                            <input type="checkbox" name="networkCondition" value="800K_0%_300ms">&nbsp;800K_0%_300ms&nbsp;&nbsp;
+                            <input type="checkbox" name="networkCondition" value="800K_0%_600ms">&nbsp;800K_0%_600ms&nbsp;&nbsp;<br>
+                            <input type="checkbox" name="networkCondition" value="800K_20%_200ms">&nbsp;800K_20%_200ms&nbsp;&nbsp;
+                            <input type="checkbox" name="networkCondition" value="800K_20%_300ms">&nbsp;800K_20%_300ms&nbsp;&nbsp;
+                            <input type="checkbox" name="networkCondition" value="800K_20%_600ms">&nbsp;800K_20%_600ms&nbsp;&nbsp;
+
                         </td>
 					</tr>
 				</tbody>
@@ -262,6 +283,7 @@
         let mode_checkList =new Array();
         let codec_checkList =new Array();
         let index_checkList =new Array();
+        let extend_checkList =new Array();
         let obj_version = document.getElementsByName("version");
         for (let i = 0; i < obj_version.length; i++) {
                 if (obj_version[i].checked)
@@ -287,16 +309,27 @@
                 if (obj_index[i].checked)
                     index_checkList.push(obj_index[i].value);
         }
+        let extend_index = document.getElementsByName("networkCondition");
+        for (let i = 0; i < extend_index.length; i++) {
+                if (extend_index[i].checked)
+                    extend_checkList.push(extend_index[i].value);
+        }
+
         if (index_checkList.length ==0 || version_checkList.length ==0 || browser_checkList.length==0 || mode_checkList.length==0 || codec_checkList.length==0){
-            my_showTip("多重条件查询，请选择条件例如：&#10;" +
-                "Version:2.4.0&#10;" +
-                "Browser:chrome&#10;" +
-                "Mode:live&#10;" +
-                "Codec:h264&#10;" +
+            my_showTip("多重条件查询，请选择条件例如：<br>" +
+                "Version:2.4.0<br>" +
+                "Browser:chrome<br>" +
+                "Mode:live<br>" +
+                "Codec:h264<br>" +
                 "Index:CPU")
         }
         else {
-            $.ajax({
+            var lossRateCheckbox = document.getElementById('lossRate');
+            if(lossRateCheckbox.checked == true && extend_checkList.length ==0){
+                my_showTip("请选择网损条件")
+            }
+            else {
+                $.ajax({
              type : "post",
              url : "/showQearyResult",    //请求发送到Servlet处
              dataType : "json",        //返回数据形式为json
@@ -305,7 +338,8 @@
                  browser_check:JSON.stringify(browser_checkList),
                  mode_check:JSON.stringify(mode_checkList),
                  codec_check:JSON.stringify(codec_checkList),
-                 index_check:JSON.stringify(index_checkList)
+                 index_check:JSON.stringify(index_checkList),
+                 extend_check:JSON.stringify(extend_checkList)
              },
              error:function(){
                     alert('请求数据失败,请检查选择条件！');
@@ -347,6 +381,7 @@
                     }
                 }
         });
+            }
         }
     }
 
@@ -578,6 +613,16 @@
         }
     })
 
+    }
+
+    function checkLossRate() {
+        var lossRateElement = document.getElementById('lossRate');
+        if(lossRateElement.checked == true){
+            document.getElementById("network_extend").style.display="";
+        }else {
+            document.getElementById("network_extend").style.display="none";
+            checkOrCancelAll("networkCondition")
+        }
     }
 
     </script>
