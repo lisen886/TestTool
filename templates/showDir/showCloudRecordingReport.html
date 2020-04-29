@@ -1,0 +1,509 @@
+{% extends "baseNavbar.html" %}
+{% block title %}Test Tool | CloudRecord Report{% endblock %}
+{% block page_content %}
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						请选择
+					</h3>
+				</div>
+                <div class="panel-body">
+                    <table class="table table-striped table-condensed">
+				<tbody>
+					<tr>
+                        <td width='3%'>
+                            Version：
+                        </td>
+						<td>
+                            <input type="checkbox" id="version_cloudRecoding" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
+                            {% for version in versions %}
+                                <input type="checkbox" name="version_cloudRecoding" value={{ version }}>&nbsp;{{ version }}&nbsp;&nbsp;
+                            {% endfor %}
+                        </td>
+					</tr>
+                    <tr>
+                        <td>
+                            指标：
+                        </td>
+						<td>
+                            <input type="checkbox" name="bugs_cloudRecoding" value="bugs">&nbsp;bug数量&nbsp;&nbsp;
+                        </td>
+					</tr>
+                    <tr>
+                        <td>
+
+                        </td>
+						<td>
+                            <input type="checkbox" name="passRate_cloudRecoding" value="passRate">&nbsp;验收用例通过率&nbsp;&nbsp;
+                        </td>
+					</tr>
+                    <tr>
+                        <td>
+
+                        </td>
+						<td>
+                            <input type="checkbox" name="package_cloudRecoding" value="packages">&nbsp;测试包数&nbsp;&nbsp;
+                        </td>
+					</tr>
+				</tbody>
+			</table>
+				</div>
+                <div class="panel-footer">
+                    <button type="button" class="btn btn-primary" onclick="searchCloudRecord()" id="btn_search">查找</button>
+                    <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showCloudRecordReport-1" data-toggle="modal">编辑</button>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>
+<div class="col-md-12 column">
+    <div class="modal fade" id="modal-container-showCloudRecordReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        <select id="selectDatabase" class="selectpicker show-tick" title="请选择一项" data-live-search="true" data-size="5">
+                            <option>cloudRecord</option>
+                        </select>
+                        <button type="button" class="btn btn-primary" id="btn_add" href="#insert-showCloudRecordReport-1" data-toggle="modal">新增</button>
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed" id="show">
+                        <tbody id="showbodyCloudRecord">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="showCloudReportByVersion-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        更新信息
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed">
+                        version：<input type="text" id="showCloudRecordReportByVersion" /><p></p>
+                        bug数量：<input type="text" id="showCloudRecordReportByBugs" /><p></p>
+                        验收用例通过率：<input type="text" id="showCloudRecordReportByPassRate"/><p></p>
+                        测试包数：<input type="text" id="showCloudRecordReportByPackages"><p></p>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="updateCloudRecord()">更新</button>
+                    <button type="button" class="btn btn-primary" onclick="my_confirm(deleteCloudRecord,'','确认是否删除')">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="insert-showCloudRecordReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        新增信息
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed">
+                        Index：<input type="text" id="insertIndex" disabled="disabled"/><p></p>
+
+                        version：<input type="text" id="insertCloudRecordReportByVersion" /><p></p>
+                        bug数量：<input type="text" id="insertCloudRecordReportByBugs" /><p></p>
+                        验收用例通过率：<input type="text" id="insertCloudRecordReportByPassRate"/><p></p>
+                        测试包数：<input type="text" id="insertCloudRecordReportByPackages"><p></p>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="insertCloudRecord()">新增</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="main" style="width: 1000px;height:500px"></div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script src="https://cdn.bootcss.com/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-select/1.12.4/js/i18n/defaults-zh_CN.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap-select/1.12.4/css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/echarts.js') }}"></script>
+{#    <script src="https://cdn.bootcss.com/echarts/4.6.0/echarts.js"></script>#}
+    <script type="text/javascript" src="../../static/js/my-script.js"></script>
+    <script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+    option = {
+    title: {
+        text: 'title', //可自定义
+        show:false
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        data:[]
+    },
+    toolbox: {
+        orient: 'vertical',
+        backgroundColor: 'rgba(0,0,0,0)', // 工具箱背景颜色
+        borderColor: '#ccc',       // 工具箱边框颜色
+        y: 'center',
+        feature: {
+            dataZoom: {
+               yAxisIndex: 'none'
+            }, //区域缩放，区域缩放还原
+            magicType: {
+                type: ['line', 'bar']
+                },  //切换为折线图，切换为柱状图
+            restore: {},  //还原
+            saveAsImage: {}
+        }
+    },
+    grid: {
+        left: '3%',
+        right: '3%',
+        top:"15%",
+        bottom: '5%',// 控制图表上下左右的空白尺寸
+        containLabel: true, //自适应画布大小
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : false,
+            data : []// X轴的定义
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value'// Y轴的定义
+        }
+    ],
+    series : []// 数据
+};
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    {#myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画#}
+
+    function checkOrCancelAll(value){
+        //1.获取checkbo的元素对象
+        var chElt=document.getElementById(value);
+        //2.获取选中状态
+        var checkedElt=chElt.checked;
+        //3.若checked=true,将所有的复选框选中,checked=false,将所有的复选框取消
+        var allCheck=document.getElementsByName(value);
+        //4.循环遍历取出每一个复选框中的元素
+        if(checkedElt){
+            //全选
+            for(var i=0;i<allCheck.length;i++){
+                //设置复选框的选中状态
+                allCheck[i].checked=true;
+            }
+        }else{
+            //取消全选
+            for(var i=0;i<allCheck.length;i++){
+                allCheck[i].checked=false;
+            }
+        }
+    }
+
+    function searchCloudRecord() {
+        let version_cloudRecoding_checkList =new Array();
+        let index_cloudRecoding_checkList =new Array();
+
+        let obj_version_cloudRecoding = document.getElementsByName("version_cloudRecoding");
+        for (let i = 0; i < obj_version_cloudRecoding.length; i++) {
+                if (obj_version_cloudRecoding[i].checked)
+                    version_cloudRecoding_checkList.push(obj_version_cloudRecoding[i].value);
+        }
+        let obj_bugs_cloudRecoding = document.getElementsByName("bugs_cloudRecoding");
+        for (let i = 0; i < obj_bugs_cloudRecoding.length; i++) {
+                if (obj_bugs_cloudRecoding[i].checked)
+                    index_cloudRecoding_checkList.push(obj_bugs_cloudRecoding[i].value);
+        }
+        let obj_passRate_cloudRecoding = document.getElementsByName("passRate_cloudRecoding");
+        for (let i = 0; i < obj_passRate_cloudRecoding.length; i++) {
+                if (obj_passRate_cloudRecoding[i].checked)
+                    index_cloudRecoding_checkList.push(obj_passRate_cloudRecoding[i].value);
+        }
+        let obj_package_cloudRecoding = document.getElementsByName("package_cloudRecoding");
+        for (let i = 0; i < obj_package_cloudRecoding.length; i++) {
+                if (obj_package_cloudRecoding[i].checked)
+                    index_cloudRecoding_checkList.push(obj_package_cloudRecoding[i].value);
+        }
+
+        var params = {
+            data:JSON.stringify({
+                version_check:version_cloudRecoding_checkList,
+                index_check:index_cloudRecoding_checkList,
+            })
+
+        };
+        if (version_cloudRecoding_checkList.length ==0 || index_cloudRecoding_checkList.length==0){
+            my_showTip("请选择需要查看的指标！！！")
+        }
+        else {
+            $.ajax({
+             type : "post",
+             url : "/showCloudRecodQearyResult",    //请求发送到Servlet处
+             dataType : "json",        //返回数据形式为json
+             data:params,
+             error:function(){
+                    alert('请求数据失败,请检查选择条件！');
+                    myChart.hideLoading();
+                },success:function (jsons){
+                    if (jsons) {
+                        console.log(jsons);
+                        var Item = function(){
+                    return {
+                        name:'',
+                        type:'line',
+                        {#smooth:true,  //这个是把线变成曲线#}
+                        label: {normal: {show: true,position: 'top'}}, // 显示每个点的数值
+                        {#markLine: {data: [{type: 'average', name: '平均值'}]},#}
+                        data:[],
+                        }
+                    };
+                        var legends = [];
+                        var Series = [];
+                        var json = jsons.data;
+                        for(var i=0;i < json.length;i++){
+                            var it = new Item();
+                            it.name = json[i].name;
+                            legends.push(json[i].name);
+                            it.data = json[i].data;
+                            Series.push(it);
+                        }
+                        try {
+                            option.xAxis[0].data = json[0].xcontent;
+                        }
+                        catch (e) {
+                            console.log(e);
+                            my_showTip("请检查查询组合是否存在异常")
+                        }
+                        option.legend.data = legends;
+                        option.series = Series; // 设置图表
+                        myChart.hideLoading();    //隐藏加载动画
+                        myChart.setOption(option,true);// 重新加载图表
+                    }
+                }
+        });
+        }
+    }
+
+    function genTable(){
+        var s = document.getElementById("selectDatabase");
+        selectDatabase = s.options[s.selectedIndex].text;
+        $.ajax({
+             type : "post",
+             url : "/getCloudRecordInfo",    //请求发送到Servlet处
+             dataType : "json",        //返回数据形式为json
+             data:{
+                 selectDatabase:selectDatabase
+             },
+             error:function(){
+                    alert('请求数据失败,请检查选择条件！');
+                    myChart.hideLoading();
+                },success:function (data){
+                $("#show tbody").html("");
+                 var t = document.getElementById("showbodyCloudRecord");
+                 var tr = document.createElement("tr");
+                 var td1 = document.createElement("th");
+                 td1.innerHTML = "version";
+                 var td2 = document.createElement("th");
+                 td2.innerHTML = "bug数量";
+                 var td3 = document.createElement("th");
+                 td3.innerHTML = "验收用例通过率";
+                 var td4 = document.createElement("th");
+                 td4.innerHTML = "测试包数";
+                 var td5 = document.createElement("th");
+                 td5.innerHTML = "operate";
+                 tr.appendChild(td1);
+                 tr.appendChild(td2);
+                 tr.appendChild(td3);
+                 tr.appendChild(td4);
+                 tr.appendChild(td5);
+                 t.appendChild(tr);
+                 for (i = 0; i < data.data.length; i++) {
+                     var tr2 = document.createElement("tr");
+                     var td11 = document.createElement("td");
+                     td11.innerHTML = data.data[i].version;
+                     var td22 = document.createElement("td");
+                     td22.innerHTML = data.data[i].bugs;
+                     var td33 = document.createElement("td");
+                     td33.innerHTML = data.data[i].passRate;
+                     var td44 = document.createElement("td");
+                     td44.innerHTML = data.data[i].packages;
+                     var td55 = document.createElement("td");
+                     td55.innerHTML = '<a id="showReportByNo" href="#showCloudReportByVersion-1" data-toggle="modal" data-id="'+data.data[i].version+','+selectDatabase+'">更新|删除';
+                     tr2.appendChild(td11);
+                     tr2.appendChild(td22);
+                     tr2.appendChild(td33);
+                     tr2.appendChild(td44);
+                     tr2.appendChild(td55);
+                     t.appendChild(tr2);
+                 }
+            }
+        })
+    };
+
+    $('#selectDatabase').on('changed.bs.select', function () {
+        genTable()
+    });
+
+    var cateid = 0;
+    $('#showCloudReportByVersion-1').on('shown.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        cateid = button.data('id').split(",");
+        version = cateid[0];
+        index = cateid[1];
+        $.ajax({
+            url:'/getCloudRecordInfoByVersion',
+            type:'post',
+            dataType: 'json',
+            data:{
+                version:version,
+                index:index
+            },
+            error:function(){
+                alert('出现错误！');
+            },success:function (data){
+                let info = data.data[0];
+                $('#showCloudRecordReportByVersion').val(info.version);
+                $('#showCloudRecordReportByBugs').val(info.bugs);
+                $('#showCloudRecordReportByPassRate').val(info.passRate);
+                $('#showCloudRecordReportByPackages').val(info.packages);
+                $('#showCloudReportByVersion-1').modal('show');
+            }
+        });
+    });
+    $('#insert-showCloudRecordReport-1').on('shown.bs.modal', function () {
+        let value = $("#selectDatabase option:selected").val();
+        if (value){
+            $('#insertIndex').val(value);
+            $('#insert-showCloudRecordReport-1').modal('show');
+        } else
+        {
+            my_showTip("请选择一项需要更新的数据表");
+            $('#insert-showCloudRecordReport-1').modal('hide');
+        }
+    });
+
+    $('#modal-container-showCloudRecordReport-1').on('hide.bs.modal', function () {
+        location.reload();
+    });
+
+    function updateCloudRecord() {
+    var s = document.getElementById("selectDatabase");
+    var selectDatabase = s.options[s.selectedIndex].text;
+    var version = $("#showCloudRecordReportByVersion").val();
+    var bugs = $("#showCloudRecordReportByBugs").val();
+	var passRate = $("#showCloudRecordReportByPassRate").val();
+	var packages = $("#showCloudRecordReportByPackages").val();
+    $.ajax({
+        url:'/updateCloudRecordInfoByVersion',
+        type:'post',
+        dataType: 'json',
+        data:{
+            version:version,
+            bugs:bugs,
+            passRate:passRate,
+            packages:packages,
+            database:selectDatabase,
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#showCloudReportByVersion-1').modal('hide');
+                genTable();
+                {#location.reload();#}
+            }else {
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
+            }
+
+        }
+    })
+}
+
+    function insertCloudRecord() {
+    var s = document.getElementById("insertIndex");
+    var selectDatabase = s.value;
+	var version = $("#insertCloudRecordReportByVersion").val();
+	var bugs = $("#insertCloudRecordReportByBugs").val();
+	var passRate = $("#insertCloudRecordReportByPassRate").val();
+	var packages = $("#insertCloudRecordReportByPackages").val();
+    $.ajax({
+        url:'/insertCloudRecordInfoByVersion',
+        type:'post',
+        dataType: 'json',
+        data:{
+            version:version,
+            bugs:bugs,
+            passRate:passRate,
+            packages:packages,
+            database:selectDatabase,
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#insert-showCloudRecordReport-1').modal('hide');
+                genTable();
+            }else {
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
+            }
+
+        }
+    })
+}
+
+    function deleteCloudRecord() {
+        var s = document.getElementById("selectDatabase");
+        var selectDatabase = s.options[s.selectedIndex].text;
+        var version = $("#showCloudRecordReportByVersion").val();
+        $.ajax({
+        url:'/deleteCloudRecordInfoByVersion',
+        type:'post',
+        dataType: 'json',
+        data:{
+            version:version,
+            database:selectDatabase,
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#showCloudReportByVersion-1').modal('hide');
+                genTable();
+                {#location.reload();#}
+            }else {
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
+            }
+
+        }
+    })
+
+    }
+
+    </script>
+    <style type="text/css">
+        .modal{overflow:auto!important;}
+    </style>
+
+{% endblock %}

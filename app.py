@@ -511,5 +511,95 @@ def deleteNativeInfo():
         else:
             return jsonify({'status': 400, 'message': 'error'})
 
+@app.route("/showCloudRecordPerf",methods=['GET','POST'])
+def showCloudRecordPerf():
+    versions = []
+    values = getCloudRecordVersion()
+    for value in values:
+        versions.append(value.get("version"))
+    return render_template("showDir/showCloudRecordingReport.html", versions=versions)
+
+
+@app.route("/showCloudRecodQearyResult",methods=['GET','POST'])
+def showCloudRecodQearyResult():
+    data = json.loads(request.form.get('data'))
+    version_checkList = data.get('version_check')
+    index_checkList = data.get('index_check')
+    values = getCloudRecordPerInfo(version_checkList,index_checkList)
+    new_data = []
+    index_checkList.remove("version")
+    for index in index_checkList:
+        new_xlist = []
+        new_value = []
+        for value in values:
+            new_xlist.append(value['version'])
+            new_value.append(value[index])
+        new_data.append({"name": index,
+                         "data": new_value,
+                         "xcontent": new_xlist
+                         })
+
+    datas = {
+        "data": new_data
+    }
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
+
+@app.route('/getCloudRecordInfo',methods=['POST','GET'])
+def getCloudRecordInfo():
+    selectDatabase = request.form.get('selectDatabase')
+    data = getCloudRecordInfoSQL(selectDatabase)
+    return jsonify({'status': 200, 'data': data})
+
+@app.route ('/getCloudRecordInfoByVersion',methods=['POST','GET'])
+def getCloudRecordInfoByVersion():
+    version = request.form.get('version')
+    index = request.form.get('index')
+    data = getCloudRecordInfoByVersionSQL(version,index)
+    return jsonify({'status': 200, 'data': data})
+
+@app.route ('/updateCloudRecordInfoByVersion',methods=['POST','GET'])
+def updateCloudRecordInfoByVersion():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = updateCloudRecordInfoByVersionSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
+
+@app.route ('/insertCloudRecordInfoByVersion',methods=['POST','GET'])
+def insertCloudRecordInfoByVersion():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = insertCloudRecordInfoByVersionSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
+
+
+@app.route ('/deleteCloudRecordInfoByVersion',methods=['POST','GET'])
+def deleteCloudRecordInfoByVersion():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = deleteCloudRecordInfoByVersionSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)

@@ -168,3 +168,43 @@ def deleteNativeInfoByVersionSQL(data):
     res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
     addTestToolLogSerever(session.get('username'), cmd)
     return res
+
+##### cloudRecord mysql #####
+def getCloudRecordVersion():
+    cmd = 'SELECT * FROM cloudRecord order by version ASC'
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getCloudRecordPerInfo(version,indexList):
+    indexList.append("version")
+    cmd = 'SELECT '+",".join(indexList)+' FROM cloudRecord Where version in ' + str(version).replace("[","(").replace("]",")")
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getCloudRecordInfoSQL(index):
+    cmd = 'SELECT * FROM '+index
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getCloudRecordInfoByVersionSQL(version,index):
+    cmd = 'SELECT * FROM '+index+' where version ='+json.dumps(version)
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def updateCloudRecordInfoByVersionSQL(data):
+    cmd = "update {database[0]} set bugs={bugs[0]},passRate={passRate[0]},packages={packages[0]} where version='{version[0]}'".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
+
+def insertCloudRecordInfoByVersionSQL(data):
+    cmd = "INSERT INTO {database[0]} set version='{version[0]}',bugs={bugs[0]},passRate={passRate[0]},packages={packages[0]}".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
+
+def deleteCloudRecordInfoByVersionSQL(data):
+    cmd = "DELETE FROM {database[0]} where version='{version[0]}'".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
