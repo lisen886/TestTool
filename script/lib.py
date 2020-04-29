@@ -18,31 +18,61 @@ def creatTable():
                    TEL          INT );
                    '''
     operateCreatTable("userDB.db", creatTable)
+
+# def registerUser(valueList):
+#     insertValue = 'INSERT INTO COMPANY (NAME,TEAM,PASSWORD,TEL) VALUES ' + str(valueList) + ';'
+#     status = operateInsert("userDB.db", insertValue)
+#     return status
+# def getValue():
+#     select = '''SELECT name, team, password, tel  from COMPANY'''
+#     values = operateSelect("userDB.db", select)
+#     return values
+
+# def getUserInfo(inputName):
+#     select = "SELECT *  from COMPANY WHERE NAME = "+json.dumps(inputName)
+#     values = operateSelect("userDB.db", select)
+#     return values
+
+# def deleteUserInfo(inputName):
+#     deleteCondition = "DELETE FROM COMPANY WHERE NAME = "+json.dumps(inputName)
+#     values = operateDelete("userDB.db", deleteCondition)
+#     addTestToolLogSerever(session.get('username'), deleteCondition)
+#     return values
+#
+# def updateUserInfo(inputName,updateName,updateTeam,updatePassword,updateTel):
+#     updateCondition = "UPDATE COMPANY SET NAME = "+json.dumps(updateName)+", TEAM="+json.dumps(updateTeam)+", PASSWORD ="+json.dumps(updatePassword)+", TEL="+json.dumps(updateTel)+" WHERE NAME = "+json.dumps(inputName)
+#     values = operateUpdate("userDB.db", updateCondition)
+#     addTestToolLogSerever(session.get('username'), updateCondition)
+#     return values
+
+#### sqlite3 userDB.db  --> MySQL webRTC_per.db TestToolUser
 def registerUser(valueList):
-    insertValue = 'INSERT INTO COMPANY (NAME,TEAM,PASSWORD,TEL) VALUES ' + str(valueList) + ';'
-    status = operateInsert("userDB.db", insertValue)
-    return status
+    cmd = 'INSERT INTO TestToolUser (NAME,TEAM,PASSWORD,TEL) VALUES ' + str(valueList) + ';'
+    res = mysql_update(host=host, username=username, password=password, database=WebRTC_DB, cmd=cmd)
+    return res
+
 def getValue():
-    select = '''SELECT name, team, password, tel  from COMPANY'''
-    values = operateSelect("userDB.db", select)
+    cmd = '''SELECT NAME,TEAM,PASSWORD,TEL  from TestToolUser'''
+    values = mysql_query(host=host, username=username, password=password, database=WebRTC_DB, cmd=cmd)
     return values
 
 def getUserInfo(inputName):
-    select = "SELECT *  from COMPANY WHERE NAME = "+json.dumps(inputName)
-    values = operateSelect("userDB.db", select)
+    cmd = "SELECT *  from TestToolUser WHERE NAME = "+json.dumps(inputName)
+    values = mysql_query(host=host, username=username, password=password, database=WebRTC_DB, cmd=cmd)
     return values
 
 def deleteUserInfo(inputName):
-    deleteCondition = "DELETE FROM COMPANY WHERE NAME = "+json.dumps(inputName)
-    values = operateDelete("userDB.db", deleteCondition)
-    addTestToolLogSerever(session.get('username'), deleteCondition)
-    return values
+    cmd = "DELETE FROM TestToolUser WHERE NAME = "+json.dumps(inputName)
+    res = mysql_update(host=host, username=username, password=password, database=WebRTC_DB, cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
 
 def updateUserInfo(inputName,updateName,updateTeam,updatePassword,updateTel):
-    updateCondition = "UPDATE COMPANY SET NAME = "+json.dumps(updateName)+", TEAM="+json.dumps(updateTeam)+", PASSWORD ="+json.dumps(updatePassword)+", TEL="+json.dumps(updateTel)+" WHERE NAME = "+json.dumps(inputName)
-    values = operateUpdate("userDB.db", updateCondition)
-    addTestToolLogSerever(session.get('username'), updateCondition)
-    return values
+    cmd = "UPDATE TestToolUser SET NAME = "+json.dumps(updateName)+", TEAM="+json.dumps(updateTeam)+", PASSWORD ="+json.dumps(updatePassword)+", TEL="+json.dumps(updateTel)+" WHERE NAME = "+json.dumps(inputName)
+    print(cmd)
+    res = mysql_update(host=host, username=username, password=password, database=WebRTC_DB, cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
 
 def getPerKeyInfo():
     values = mysql_query(host=host,username=username, password=password,database=WebRTC_DB,cmd='SELECT * FROM CPU order by No ASC')
