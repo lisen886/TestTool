@@ -308,7 +308,8 @@ def showQearyResult():
     codec_checkList = request.form.get('codec_check')
     index_checkList = request.form.get('index_check')
     extend_check = request.form.get('extend_check')
-    info_dict = getPerInfo(index_checkList,version_checkList,browser_checkList,mode_checkList,codec_checkList,extend_check)
+    AV_extend_check = request.form.get('AV_extend_check')
+    info_dict = getPerInfo(index_checkList,version_checkList,browser_checkList,mode_checkList,codec_checkList,extend_check,AV_extend_check)
     new_data = []
     for key in info_dict.keys():
         for browser in json.loads(browser_checkList):
@@ -318,6 +319,22 @@ def showQearyResult():
                         continue
                     if key == "视频卡顿率":
                         for extend in json.loads(extend_check):
+                            new_xlist = []
+                            new_value = []
+                            for value in info_dict[key]:
+                                if browser in value and mode in value and codec in value and extend in value:
+                                    new_xlist.append(value[1])
+                                    new_value.append(value[5])
+                            if new_xlist:
+                                new_xlist = new_xlist
+                            else:
+                                new_xlist = json.loads(version_checkList)
+                            new_data.append({"name": "_".join([key, browser, mode, codec, extend]),
+                                             "data": new_value,
+                                             "xcontent": new_xlist
+                                             })
+                    elif key == "音频抗丢包边界":
+                        for extend in json.loads(AV_extend_check):
                             new_xlist = []
                             new_value = []
                             for value in info_dict[key]:

@@ -69,7 +69,7 @@
                             <input type="checkbox" name="index" value="视频延时">&nbsp;视频延时&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="视频卡顿率" onclick="checkLossRate(this)" id="lossRate">&nbsp;视频卡顿率&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="音频延时">&nbsp;音频延时&nbsp;&nbsp;
-                            <input type="checkbox" name="index" value="音频抗丢包边界" disabled="disabled">&nbsp;音频抗丢包边界&nbsp;&nbsp;
+                            <input type="checkbox" name="index" value="音频抗丢包边界" onclick="checkVideobox(this)" id="videoAudio">&nbsp;音频抗丢包边界&nbsp;&nbsp;
                             <input type="checkbox" name="index" value="音画同步">&nbsp;音画同步&nbsp;&nbsp;
                         </td>
 					</tr>
@@ -92,6 +92,16 @@
                             <input type="checkbox" name="networkCondition" value="800K_20%_300ms">&nbsp;800K_20%_300ms&nbsp;&nbsp;
                             <input type="checkbox" name="networkCondition" value="800K_20%_600ms">&nbsp;800K_20%_600ms&nbsp;&nbsp;
 
+                        </td>
+					</tr>
+                    <tr id="video_extend" style="display: none">
+                        <td>
+                            AV：
+                        </td>
+						<td>
+                            <input type="checkbox" id="videoCondition" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
+                            <input type="checkbox" name="videoCondition" value="AV">&nbsp;AV&nbsp;&nbsp;
+                            <input type="checkbox" name="videoCondition" value="AudioOnly">&nbsp;AudioOnly&nbsp;&nbsp;
                         </td>
 					</tr>
 				</tbody>
@@ -284,6 +294,7 @@
         let codec_checkList =new Array();
         let index_checkList =new Array();
         let extend_checkList =new Array();
+        let AV_extend_checkList =new Array();
         let obj_version = document.getElementsByName("version");
         for (let i = 0; i < obj_version.length; i++) {
                 if (obj_version[i].checked)
@@ -314,6 +325,11 @@
                 if (extend_index[i].checked)
                     extend_checkList.push(extend_index[i].value);
         }
+        let AVextend_index = document.getElementsByName("videoCondition");
+        for (let i = 0; i < AVextend_index.length; i++) {
+                if (AVextend_index[i].checked)
+                    AV_extend_checkList.push(AVextend_index[i].value);
+        }
 
         if (index_checkList.length ==0 || version_checkList.length ==0 || browser_checkList.length==0 || mode_checkList.length==0 || codec_checkList.length==0){
             my_showTip("多重条件查询，请选择条件例如：<br>" +
@@ -325,8 +341,12 @@
         }
         else {
             var lossRateCheckbox = document.getElementById('lossRate');
+            var videoAudioElement = document.getElementById('videoAudio');
             if(lossRateCheckbox.checked == true && extend_checkList.length ==0){
                 my_showTip("请选择网损条件")
+            }
+            if (videoAudioElement.checked == true && AV_extend_checkList.length ==0){
+                my_showTip("请选择条件")
             }
             else {
                 $.ajax({
@@ -339,7 +359,8 @@
                  mode_check:JSON.stringify(mode_checkList),
                  codec_check:JSON.stringify(codec_checkList),
                  index_check:JSON.stringify(index_checkList),
-                 extend_check:JSON.stringify(extend_checkList)
+                 extend_check:JSON.stringify(extend_checkList),
+                 AV_extend_check:JSON.stringify(AV_extend_checkList),
              },
              error:function(){
                     alert('请求数据失败,请检查选择条件！');
@@ -359,6 +380,7 @@
                     };
                         var legends = [];
                         var Series = [];
+                        xAxis_value = [];
                         var json = jsons.data;
                         for(var i=0;i < json.length;i++){
                             var it = new Item();
@@ -366,14 +388,17 @@
                             legends.push(json[i].name);
                             it.data = json[i].data;
                             Series.push(it);
+                            try {
+                                if(json[i].xcontent.length > xAxis_value.length){
+                                    xAxis_value = json[i].xcontent
+                                }
+                            }
+                            catch (e) {
+                                console.log(e);
+                                my_showTip("请检查查询组合是否存在异常")
+                            }
                         }
-                        try {
-                            option.xAxis[0].data = json[0].xcontent;
-                        }
-                        catch (e) {
-                            console.log(e);
-                            my_showTip("请检查查询组合是否存在异常")
-                        }
+                        option.xAxis[0].data = xAxis_value;
                         option.legend.data = legends;
                         option.series = Series; // 设置图表
                         myChart.hideLoading();    //隐藏加载动画
@@ -622,6 +647,17 @@
         }else {
             document.getElementById("network_extend").style.display="none";
             checkOrCancelAll("networkCondition")
+        }
+    }
+
+    function checkVideobox() {
+        var videoAudioElement = document.getElementById('videoAudio');
+        if(videoAudioElement.checked == true){
+            document.getElementById("video_extend").style.display="";
+        }else {
+            document.getElementById("video_extend").style.display="none";
+            document.getElementById("video_extend").style.display="none";
+            checkOrCancelAll("videoCondition")
         }
     }
 
