@@ -59,7 +59,7 @@
 						<td>
                             <input type="checkbox" id="profile_avc" onclick="checkOrCancelAll(this.id)">&nbsp;all&nbsp;&nbsp;
                             {% for profile in profiles %}
-                                <input type="checkbox" name="profile_avc" value={{ profile }}>&nbsp;{{ profile }}&nbsp;&nbsp;
+                                <input type="checkbox" name="profile_avc" value={{ profile }}>&nbsp;{{ profile }}p&nbsp;&nbsp;
                             {% endfor %}
                         </td>
 					</tr>
@@ -124,7 +124,7 @@
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed">
-                        No：<input type="text" id="showAVCReportByNoNo" /><p></p>
+                        No：<input type="text" id="showAVCReportByNoNo" disabled="disabled"/><p></p>
                         Version：<input type="text" id="showAVCReportByNoVersion" /><p></p>
                         App：<input type="text" id="showAVCReportByNoApp"/><p></p>
                         Platform：<input type="text" id="showAVCReportByNoPlatform"><p></p>
@@ -152,7 +152,7 @@
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed">
-                        No：<input type="text" id="showAVCJiraReportByNoNo" /><p></p>
+                        No：<input type="text" id="showAVCJiraReportByNoNo" disabled="disabled"/><p></p>
                         Version：<input type="text" id="showAVCJiraReportByNoVersion" /><p></p>
                         App：<input type="text" id="showAVCJiraReportByNoApp"/><p></p>
                         Platform：<input type="text" id="showAVCJiraReportByNoPlatform"><p></p>
@@ -184,18 +184,18 @@
                         Index：<input type="text" id="insertIndex" disabled="disabled"/><p></p>
 
                         No：<input type="text" id="insertAVCReportByNoNo" disabled="disabled" value="自动递增"/><p></p>
-                        Version：<input type="text" id="insertAVCReportByNoVersion" /><p></p>
-                        App：<input type="text" id="insertAVCReportByNoApp"/><p></p>
-                        Platform：<input type="text" id="insertAVCReportByNoPlatform"><p></p>
-                        Scene：<input type="text" id="insertAVCReportByNoScene"><p></p>
-                        Profile：<input type="text" id="insertAVCReportByNoProfile"><p></p>
+                        Version：<input type="text" id="insertAVCReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p>
+                        App：<input type="text" id="insertAVCReportByNoApp" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/><p></p>
+                        Platform：<input type="text" id="insertAVCReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
+                        Scene：<input type="text" id="insertAVCReportByNoScene" onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"><p></p>
+                        Profile：<input type="text" id="insertAVCReportByNoProfile" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
                         <span id = "Value_insert">Value：<input type="text" id="insertAVCReportByNoValue"><p></p></span>
                         <span id = "Bugs_insert" style="display: none">Bugs：<input type="text" id="insertAVCReportByNoBugs"><p></p></span>
                         <span id = "Links_insert" style="display: none">Links：<input type="text" id="insertAVCReportByNoLinks"><p></p></span>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="insertAVC()">新增</button>
+                    <button type="button" class="btn btn-primary" id="insertAVCButton" onclick="insertAVC()">新增</button>
                 </div>
             </div>
         </div>
@@ -369,7 +369,7 @@
         if (version_avc_checkList.length ==0 || profile_avc_checkList.length ==0 ||app_avc_checkList.length==0||selectPlatform=="请选择平台"||selectScene=="请选择场景" ||index_jira.concat(index_avc_checkList).length==0){
             my_showTip("多重条件查询，请选择条件例如：<br>" +
                 "Version:选择对应的版本<br>" +
-                "Opetion:选择正确的平台和场景<br>" +
+                "Option:选择正确的平台和场景<br>" +
                 "App:选择查看的APP<br>" +
                 "Profile:选择查看的分辨率<br>" +
                 "指标:CPU")
@@ -781,6 +781,8 @@
 }
 
     function insertAVC() {
+        var btn = $("#insertAVCButton");
+        btn.attr("disabled", true);  //按钮禁止点击
     var s = document.getElementById("insertIndex");
     var selectDatabase = s.value;
 	var Version = $("#insertAVCReportByNoVersion").val();
@@ -809,6 +811,7 @@
         error:function(){
             alert('出现错误！');
         },success:function (data){
+            btn.attr("disabled", false);
             if(data.status == 200){
                 $('#insert-showAVCReport-1').modal('hide');
                 genTable();
