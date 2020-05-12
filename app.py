@@ -637,5 +637,125 @@ def deleteCloudRecordInfoByVersion():
             return jsonify({'status': 200, 'message': 'pass'})
         else:
             return jsonify({'status': 400, 'message': 'error'})
+
+# AVC
+@app.route("/showAVCPerf",methods=['GET','POST'])
+def showAVCRecordPerf():
+    versions = []
+    apps = []
+    platforms = []
+    scenes = []
+    profiles = []
+    values = getAVCVersion()
+    for value in values:
+        if value.get("Version") not in versions:
+            versions.append(value.get("Version"))
+        if value.get("App") not in apps:
+            apps.append(value.get("App"))
+        if value.get("Platform") not in platforms:
+            platforms.append(value.get("Platform"))
+        if value.get("Scene") not in scenes:
+            scenes.append(value.get("Scene"))
+        if value.get("Profile") not in profiles:
+            profiles.append(value.get("Profile"))
+    return render_template("showDir/showAVCPerf.html", versions=versions,apps=apps,platforms=platforms,scenes=scenes,profiles=profiles)
+
+@app.route("/showAVCQearyResult",methods=['GET','POST'])
+def showAVCQearyResult():
+    data = json.loads(request.form.get('data'))
+    version_checkList = data.get('version_check')
+    selectPlatform = data.get('selectPlatform')
+    selectScene = data.get('selectScene')
+    app_avc_checkList = data.get('app_avc_checkList')
+    profile_avc_checkList = data.get('profile_avc_checkList')
+    index_avc_checkList = data.get('index_avc_checkList')
+    index_jira = data.get('index_jira')
+    if(index_jira!=""):
+        info = getAVCJiraInfo(version_checkList,selectPlatform,selectScene,app_avc_checkList,profile_avc_checkList,index_jira)
+        datas = {
+                "msg": "avc_jira",
+                "data": info
+                }
+    else:
+        info_dict = getAVCPerInfo(version_checkList,selectPlatform,selectScene,app_avc_checkList,profile_avc_checkList,index_avc_checkList)
+        new_data = []
+        for key in info_dict.keys():
+            for app in app_avc_checkList:
+                for profile in profile_avc_checkList:
+                    new_xlist = []
+                    new_value = []
+                    for value in info_dict[key]:
+                        if app in value and profile in value:
+                            new_xlist.append(value[1])
+                            new_value.append(value[6])
+                    new_data.append({"name": "_".join([key, app, profile, selectPlatform, selectScene]),
+                                     "data": new_value,
+                                     "xcontent": new_xlist
+                                     })
+
+        datas = {
+            "data": new_data
+        }
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
+
+
+@app.route('/getAVCInfo',methods=['POST','GET'])
+def getAVCInfo():
+    selectDatabase = request.form.get('selectDatabase')
+    data = getAVCInfoSQL(selectDatabase)
+    return jsonify({'status': 200, 'data': data})
+
+@app.route ('/getAVCInfoByNo',methods=['POST','GET'])
+def getAVCInfoByNo():
+    No = request.form.get('No')
+    index = request.form.get('index')
+    data = getAVCInfoByNoSQL(No,index)
+    return jsonify({'status': 200, 'data': data})
+
+
+@app.route ('/updateAVCInfoByNo',methods=['POST','GET'])
+def updateAVCInfoByNo():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = updateAVCInfoByNoSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
+
+
+@app.route ('/insertAVCInfoByNo',methods=['POST','GET'])
+def insertAVCInfoByNo():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = insertAVCInfoByNoSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
+
+@app.route ('/deleteAVCInfoByNo',methods=['POST','GET'])
+def deleteAVCInfoByNo():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = deleteAVCInfoByNoSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)

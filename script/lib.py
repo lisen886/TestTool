@@ -243,3 +243,56 @@ def deleteCloudRecordInfoByVersionSQL(data):
     res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
     addTestToolLogSerever(session.get('username'), cmd)
     return res
+
+# AVC
+def getAVCVersion():
+    cmd = 'SELECT * FROM AVC_CPU order by Version ASC'
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getAVCPerInfo(version_checkList,selectPlatform,selectScene,app_avc_checkList,profile_avc_checkList,index_avc_checkList):
+    valueDict = {}
+    for table in index_avc_checkList:
+        cmd = 'SELECT * FROM ' + 'AVC_'+table + ' WHERE Version in ' + str(version_checkList).replace("[","(").replace("]",")") +' and App in ' + str(app_avc_checkList).replace("[","(").replace("]",")")+' and Profile in ' + str(profile_avc_checkList).replace("[","(").replace("]",")")+" and Platform = '" + selectPlatform+"' and Scene = '" + selectScene + "' ORDER BY Version asc"
+        values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+        valueDict[table]=values
+    return valueDict
+
+def getAVCJiraInfo(version_checkList,selectPlatform,selectScene,app_avc_checkList,profile_avc_checkList,index_avc_checkList):
+    cmd = 'SELECT * FROM ' + 'AVC_' + index_avc_checkList + ' WHERE Version in ' + str(version_checkList).replace("[", "(").replace("]", ")") + ' and App in ' + str(app_avc_checkList).replace("[", "(").replace("]",")") + ' and Profile in ' + str(profile_avc_checkList).replace("[", "(").replace("]",")") + " and Platform = '" + selectPlatform + "' and Scene = '" + selectScene + "' ORDER BY Version asc"
+    values = mysql_query(host=host, username=username, password=password, database=Native_DB, cmd=cmd,cursorclass="dict")
+    return values
+
+def getAVCInfoSQL(index):
+    cmd = 'SELECT * FROM '+'AVC_' + index
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getAVCInfoByNoSQL(No,index):
+    cmd = 'SELECT * FROM ' + 'AVC_' + index+' where No ='+json.dumps(No)
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def updateAVCInfoByNoSQL(data):
+    if data.get("database")[0] == "Jira统计":
+        cmd = "update AVC_{database[0]} set Version='{Version[0]}',App='{App[0]}',Platform='{Platform[0]}',Scene='{Scene[0]}',Profile='{Profile[0]}',Bugs='{Bugs[0]}',Links='{Links[0]}' where No={No[0]}".format(**data)
+    else:
+        cmd = "update AVC_{database[0]} set Version='{Version[0]}',App='{App[0]}',Platform='{Platform[0]}',Scene='{Scene[0]}',Profile='{Profile[0]}',Value={Value[0]} where No={No[0]}".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
+
+def insertAVCInfoByNoSQL(data):
+    if data.get("database")[0] == "Jira统计":
+        cmd = "INSERT INTO AVC_{database[0]} set Version='{Version[0]}',App='{App[0]}',Platform='{Platform[0]}',Scene='{Scene[0]}',Profile='{Profile[0]}',Bugs='{Bugs[0]}',Links='{Links[0]}'".format(**data)
+    else:
+        cmd = "INSERT INTO AVC_{database[0]} set Version='{Version[0]}',App='{App[0]}',Platform='{Platform[0]}',Scene='{Scene[0]}',Profile='{Profile[0]}',Value='{Value[0]}'".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
+
+def deleteAVCInfoByNoSQL(data):
+    cmd = "DELETE FROM AVC_{database[0]} where No='{No[0]}'".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
