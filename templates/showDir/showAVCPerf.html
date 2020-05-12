@@ -125,11 +125,11 @@
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed">
                         No：<input type="text" id="showAVCReportByNoNo" disabled="disabled"/><p></p>
-                        Version：<input type="text" id="showAVCReportByNoVersion" /><p></p>
-                        App：<input type="text" id="showAVCReportByNoApp"/><p></p>
-                        Platform：<input type="text" id="showAVCReportByNoPlatform"><p></p>
-                        Scene：<input type="text" id="showAVCReportByNoScene"><p></p>
-                        Profile：<input type="text" id="showAVCReportByNoProfile"><p></p>
+                        Version：<input type="text" id="showAVCReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p>
+                        App：<input type="text" id="showAVCReportByNoApp" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/><p></p>
+                        Platform：<input type="text" id="showAVCReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
+                        Scene：<input type="text" id="showAVCReportByNoScene" onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"><p></p>
+                        Profile：<input type="text" id="showAVCReportByNoProfile" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
                         Value：<input type="text" id="showAVCReportByNoValue"><p></p>
                     </table>
                 </div>
@@ -153,11 +153,11 @@
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed">
                         No：<input type="text" id="showAVCJiraReportByNoNo" disabled="disabled"/><p></p>
-                        Version：<input type="text" id="showAVCJiraReportByNoVersion" /><p></p>
-                        App：<input type="text" id="showAVCJiraReportByNoApp"/><p></p>
-                        Platform：<input type="text" id="showAVCJiraReportByNoPlatform"><p></p>
-                        Scene：<input type="text" id="showAVCJiraReportByNoScene"><p></p>
-                        Profile：<input type="text" id="showAVCJiraReportByNoProfile"><p></p>
+                        Version：<input type="text" id="showAVCJiraReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p>
+                        App：<input type="text" id="showAVCJiraReportByNoApp" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/><p></p>
+                        Platform：<input type="text" id="showAVCJiraReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
+                        Scene：<input type="text" id="showAVCJiraReportByNoScene" onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"><p></p>
+                        Profile：<input type="text" id="showAVCJiraReportByNoProfile" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
                         Bugs：<input type="text" id="showAVCJiraReportByNoBugs"><p></p>
                         Links：<input type="text" id="showAVCJiraReportByNoLinks"><p></p>
                     </table>
