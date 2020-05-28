@@ -1,40 +1,30 @@
-{% extends "bootstrap/base.html"  %}
-{%- block head %}
-    <title>Test Tool | Login</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-{%- block styles %}
-    <link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
+{% extends "base.html"  %}
+{% block title %}Test Tool | Login{% endblock %}
+{% block styles %}
+    {{ super() }}
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-{%- endblock styles %}
+{% endblock styles %}
+{% block content %}
+    <div id="container">
+        <div id="output">
+            <div class="containerT">
+                <div class="col-md-12 column">
+                    <img alt="140x140" src="{{url_for('static',filename='img/TestTool.png')}}"/><p></p>
+                </div>
+                <form class="form" id="entry_form" action="/login/" method="post">
+                    <input type="text" placeholder="用户名" name="username" value="admin">
+                    <input type="password" placeholder="密码" name="password">
+                    <button type="submit">登录</button>
+                    <div id="prompt" class="prompt"></div>
+                    <a href="/register"><h4>注册®</h4>️</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
 {% block scripts %}
-    <script type="text/javascript" src="{{bootstrap_find_resource('jquery.js', cdn='jquery')}}"></script>
-    <script type="text/javascript" src="{{bootstrap_find_resource('js/bootstrap.js', cdn='bootstrap')}}"></script>
-{#	<script type="text/javascript" src="/static/js/vector.js"></script>#}
-	<script type="text/javascript" src="{{url_for('static',filename='js/vector.js')}}"></script>
-{%- endblock scripts %}
-
-{%- endblock head %}
-{% block body -%}
-<div id="container">
-	<div id="output">
-		<div class="containerT">
-			<div class="col-md-12 column">
-				<img alt="140x140" src="{{url_for('static',filename='img/TestTool.png')}}"/><p></p>
-			</div>
-			<form class="form" id="entry_form" action="/login/" method="post">
-				<input type="text" placeholder="用户名" name="username" value="admin">
-				<input type="password" placeholder="密码" name="password">
-				<button type="submit">登录</button>
-				<div id="prompt" class="prompt"></div>
-				<a href="/register"><h4>注册®</h4>️</a>
-			</form>
-		</div>
-	</div>
-</div>
-
-<script type="text/javascript">
+    {{ super() }}
+    <script type="text/javascript">
     $(function(){
         Victor("container", "output");   //登录背景函数
         $("#entry_name").focus();
@@ -45,6 +35,5 @@
         });
     });
 </script>
-<div style="text-align:center;">
-</div>
-{%- endblock body %}
+{% endblock scripts %}
+
