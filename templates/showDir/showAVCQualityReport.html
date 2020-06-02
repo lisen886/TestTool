@@ -1,0 +1,855 @@
+{% extends "baseNavbar.html" %}
+{% block title %}Test Tool | AVC Quality Report{% endblock %}
+{% block page_content %}
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						请选择
+					</h3>
+				</div>
+                <div class="panel-body">
+                    <table class="table table-striped table-condensed">
+				<tbody>
+                    <tr>
+						<td>
+                            <input type="checkbox" id="last_three_version_avcQuality" checked="checked">&nbsp;最近三个版本
+                        </td>
+					</tr>
+                    <tr>
+						<td>
+                            <select id="selectPlatform_avcQuality" class="selectpicker show-tick" title="请选择平台" data-live-search="true" data-size="5" data-width="150px" onchange="selectOnchang(this)">
+                                {% for platform in platforms %}
+                                <option>{{ platform }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+					</tr>
+					<tr>
+						<td id="td_version_avcQuality">
+                        </td>
+					</tr>
+                    <tr>
+						<td>
+                            <input type="radio" name="search_interval_avcQuality" id="search_interval_avcQuality_1month" checked="checked" value="1 MONTH">&nbsp;近一月
+                            <input type="radio" name="search_interval_avcQuality" id="search_interval_avcQuality_3month" value="3 MONTH">&nbsp;近三月
+                            <input type="radio" name="search_interval_avcQuality" id="search_interval_avcQuality_6month" value="6 MONTH">&nbsp;近六月
+                            <input type="radio" name="search_interval_avcQuality" id="search_interval_avcQuality_1year" value="1 YEAR">&nbsp;近一年
+                        </td>
+					</tr>
+                    <tr>
+						<td>
+                            <input type="radio" name="avcQuality_index" id="crash_avcQuality" value="AVC_Quality_Crash">&nbsp;Crash率
+                            <input type="radio" name="avcQuality_index" id="quality_count_avcQuality" value="AVC_Quality_Count">&nbsp;线上问题统计
+                        </td>
+					</tr>
+				</tbody>
+			</table>
+				</div>
+                <div class="panel-footer">
+                    <button type="button" class="btn btn-primary" onclick="searchAVCQuality()" id="btn_search">查找</button>
+                    <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showAVCReport-1" data-toggle="modal">编辑</button>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>
+<div class="col-md-12 column">
+    <div class="modal fade" id="modal-container-showAVCReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:800px">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        <select id="selectDatabase" class="selectpicker show-tick" title="请选择一项" data-live-search="true" data-size="5">
+                            <option>内存</option>
+                            <option>CPU</option>
+                            <option>GPU</option>
+                            <option>冷启动时长</option>
+                            <option>Jira统计</option>
+                        </select>
+                        <button type="button" class="btn btn-primary" id="btn_add" href="#insert-showAVCReport-1" data-toggle="modal">新增</button>
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed" id="show" style="table-layout:fixed;word-wrap:break-word;">
+                        <tbody id="showbodyAVC">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="showAVCReportByNo-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        更新信息
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed">
+                        No：<input type="text" id="showAVCReportByNoNo" disabled="disabled"/><p></p>
+                        Version：<input type="text" id="showAVCReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p>
+                        App：<input type="text" id="showAVCReportByNoApp" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/><p></p>
+                        Platform：<input type="text" id="showAVCReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
+                        Scene：<input type="text" id="showAVCReportByNoScene" onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"><p></p>
+                        Profile：<input type="text" id="showAVCReportByNoProfile" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
+                        Value：<input type="text" id="showAVCReportByNoValue"><p></p>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="updateAVC()">更新</button>
+                    <button type="button" class="btn btn-primary" onclick="my_confirm(deleteAVC,'','确认是否删除')">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="showAVCJiraReportByNo-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        更新信息
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed">
+                        No：<input type="text" id="showAVCJiraReportByNoNo" disabled="disabled"/><p></p>
+                        Version：<input type="text" id="showAVCJiraReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p>
+                        App：<input type="text" id="showAVCJiraReportByNoApp" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/><p></p>
+                        Platform：<input type="text" id="showAVCJiraReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
+                        Scene：<input type="text" id="showAVCJiraReportByNoScene" onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"><p></p>
+                        Profile：<input type="text" id="showAVCJiraReportByNoProfile" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
+                        Bugs：<input type="text" id="showAVCJiraReportByNoBugs"><p></p>
+                        Links：<input type="text" id="showAVCJiraReportByNoLinks"><p></p>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="updateAVCJira()">更新</button>
+                    <button type="button" class="btn btn-primary" onclick="my_confirm(deleteAVC,'','确认是否删除')">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="insert-showAVCReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <div class="form-group">
+                        新增信息
+				    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover table-condensed">
+                        Index：<input type="text" id="insertIndex" disabled="disabled"/><p></p>
+
+                        No：<input type="text" id="insertAVCReportByNoNo" disabled="disabled" value="自动递增"/><p></p>
+                        Version：<input type="text" id="insertAVCReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p>
+                        App：<input type="text" id="insertAVCReportByNoApp" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/><p></p>
+                        Platform：<input type="text" id="insertAVCReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
+                        Scene：<input type="text" id="insertAVCReportByNoScene" onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"><p></p>
+                        Profile：<input type="text" id="insertAVCReportByNoProfile" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
+                        <span id = "Value_insert">Value：<input type="text" id="insertAVCReportByNoValue"><p></p></span>
+                        <span id = "Bugs_insert" style="display: none">Bugs：<input type="text" id="insertAVCReportByNoBugs"><p></p></span>
+                        <span id = "Links_insert" style="display: none">Links：<input type="text" id="insertAVCReportByNoLinks"><p></p></span>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="insertAVCButton" onclick="insertAVC()">新增</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="main" style="width: 1000px;height:500px"></div>
+<div id="main_pie" style="width: 1000px;height:500px;display: none"></div>
+
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+            <div id="main_table" style="width: 1000px;height:500px;display: none;">
+                <table class="table table-bordered table-hover table-condensed" id="showJira">
+                    <tbody id="showJiraTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script src="https://cdn.bootcss.com/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-select/1.12.4/js/i18n/defaults-zh_CN.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap-select/1.12.4/css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/echarts.js') }}"></script>
+{#    <script src="https://cdn.bootcss.com/echarts/4.6.0/echarts.js"></script>#}
+    <script type="text/javascript" src="../../static/js/my-script.js"></script>
+    <script type="text/javascript">
+
+    function selectOnchang(obj){
+        var selectPlatform = obj.options[obj.selectedIndex].text;
+        var obj_last_three_version_checked = document.getElementById('last_three_version_avcQuality').checked;
+        $.ajax({
+             type : "get",
+             url : "/getAVCQualityVersionByPlatform",    //请求发送到Servlet处
+             dataType : "json",        //返回数据形式为json
+             data:{
+                 Platform:selectPlatform,
+                 last_three_version_checked:obj_last_three_version_checked
+             },
+             error:function(){
+                 my_showTip('请求数据失败,请检查选择条件！');
+             },success:function (jsons){
+                 var versions = jsons.data;
+                 var td = document.getElementById("td_version_avcQuality");
+                 td.innerText="";
+                 td.innerHTML += "<input type=\"checkbox\" id=\"version_avcQuality\" onclick=\"checkOrCancelAll(this.id)\" checked=\"checked\">&nbsp;all&nbsp;&nbsp;";
+                 for(var i=0;i<versions.length;i++){
+                     td.innerHTML += "<input type=\"checkbox\" name=\"version_avcQuality\" value="+versions[i]+" checked=\"checked\">&nbsp;"+versions[i]+"&nbsp;&nbsp;"
+                 }
+                 var e = document.getElementById("quality_count_avcQuality");
+                 e.checked = false
+            }
+        })
+    }
+
+    $('#quality_count_avcQuality').click(function () {
+        let obj_quality_count = document.getElementById('quality_count_avcQuality');
+        let checkedElt=obj_quality_count.checked;
+
+        let allCheck=document.getElementsByName("version_avcQuality");
+        let allCheck2=document.getElementById("version_avcQuality");
+        if(allCheck2 !=null){
+            if(checkedElt){
+                allCheck2.disabled=true;
+                allCheck2.checked=false;
+                for(var i=0;i<allCheck.length;i++){
+                    allCheck[i].disabled=true;
+                    allCheck[i].checked=false;
+
+                }
+            }
+        }
+    });
+
+    $('#crash_avcQuality').click(function () {
+        let obj_quality_count = document.getElementById('crash_avcQuality');
+        let checkedElt=obj_quality_count.checked;
+
+        let allCheck=document.getElementsByName("version_avcQuality");
+        let allCheck2=document.getElementById("version_avcQuality");
+        if(allCheck2 !=null){
+            if(checkedElt){
+                allCheck2.disabled=false;
+                {#allCheck2.checked=false;#}
+                for(var i=0;i<allCheck.length;i++){
+                    allCheck[i].disabled=false;
+                    {#allCheck[i].checked=false;#}
+
+                }
+            }
+        }
+    });
+
+    var myChart = echarts.init(document.getElementById('main'));
+    option = {
+            title: {
+                text: 'title', //可自定义
+                show:false
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            legend: {
+                data:[]
+            },
+            toolbox: {
+                orient: 'vertical',
+                backgroundColor: 'rgba(0,0,0,0)', // 工具箱背景颜色
+                borderColor: '#ccc',       // 工具箱边框颜色
+                y: 'center',
+                feature: {
+                    dataZoom: {
+                       yAxisIndex: 'none'
+                    }, //区域缩放，区域缩放还原
+                    magicType: {
+                        type: ['line', 'bar']
+                        },  //切换为折线图，切换为柱状图
+                    restore: {},  //还原
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '3%',
+                top:"15%",
+                bottom: '5%',// 控制图表上下左右的空白尺寸
+                containLabel: true, //自适应画布大小
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : false,
+                    data : []// X轴的定义
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'// Y轴的定义
+                }
+            ],
+            series : []// 数据
+        };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    {#myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画#}
+
+    var myPie = echarts.init(document.getElementById('main_pie'));
+    option2 = {
+        title: {
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        toolbox: {
+                orient: 'vertical',
+                backgroundColor: 'rgba(0,0,0,0)', // 工具箱背景颜色
+                borderColor: '#ccc',       // 工具箱边框颜色
+                y: 'center',
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+        legend: {
+            type: 'scroll',
+            orient: 'vertical',
+            right: 10,
+            top: 20,
+            bottom: 20,
+            data: [],
+            {#selected: {"Native":true,"RTM":true}#}
+        },
+        series: []
+    };
+    myPie.setOption(option2);
+
+
+    function checkOrCancelAll(value){
+        //1.获取checkbo的元素对象
+        var chElt=document.getElementById(value);
+        //2.获取选中状态
+        var checkedElt=chElt.checked;
+        //3.若checked=true,将所有的复选框选中,checked=false,将所有的复选框取消
+        var allCheck=document.getElementsByName(value);
+        //4.循环遍历取出每一个复选框中的元素
+        if(checkedElt){
+            //全选
+            for(var i=0;i<allCheck.length;i++){
+                //设置复选框的选中状态
+                allCheck[i].checked=true;
+            }
+        }else{
+            //取消全选
+            for(var i=0;i<allCheck.length;i++){
+                allCheck[i].checked=false;
+            }
+        }
+    }
+
+    function searchAVCQuality() {
+        let version_avcQuality_checkList =new Array();
+
+        let obj_selectPlatform = document.getElementById("selectPlatform_avcQuality");
+        let selectPlatform = obj_selectPlatform.options[obj_selectPlatform.selectedIndex].text;
+
+        let obj_version_avcQuality = document.getElementsByName("version_avcQuality");
+        for (let i = 0; i < obj_version_avcQuality.length; i++) {
+                if (obj_version_avcQuality[i].checked)
+                    version_avcQuality_checkList.push(obj_version_avcQuality[i].value);
+        }
+
+        let index_avcQuality = $("input[name='avcQuality_index']:checked").val();
+        let search_interval_avcQuality = $("input[name='search_interval_avcQuality']:checked").val();
+        var params = {
+            data:JSON.stringify({
+                version_check:version_avcQuality_checkList,
+                selectPlatform:selectPlatform,
+                search_interval_avcQuality:search_interval_avcQuality,
+                index_avcQuality:index_avcQuality
+            })
+
+        };
+        if (selectPlatform=="请选择平台" || index_avcQuality.length==0){
+            my_showTip("请选择正确的参数！！！")
+        }
+        else {
+            $.ajax({
+             type : "post",
+             url : "/showAVCQualityQearyResult",    //请求发送到Servlet处
+             dataType : "json",        //返回数据形式为json
+             data:params,
+             error:function(){
+                    my_showTip('请求数据失败,请检查选择条件！');
+                    myChart.hideLoading();
+                },success:function (jsons){
+                    if (jsons) {
+                        document.getElementById("main").style.display="";
+                        var Item = function(){
+                        return {
+                            name:'',
+                            type:'line',
+                            {#smooth:true,  //这个是把线变成曲线#}
+                            label: {normal: {show: true,position: 'top'}}, // 显示每个点的数值
+                            {#markLine: {data: [{type: 'average', name: '平均值'}]},#}
+                            data:[],
+                            }
+                        };
+                        var legends = [];
+                        var Series = [];
+                        var json = jsons.data;
+                        for(var i=0;i < json.length;i++){
+                            var it = new Item();
+                            it.name = json[i].name;
+                            legends.push(json[i].name);
+                            it.data = json[i].data;
+                            Series.push(it);
+                        }
+                        try {
+                            for(var x=0;x<json.length;x++){
+                                let xList = json[x].xcontent;
+                                if(xList.length != 0){
+                                    option.xAxis[0].data = xList;
+                                    break;
+                                }
+                            }
+                        }
+                        catch (e) {
+                            console.log(e);
+                            my_showTip("请检查查询组合是否存在异常")
+                        }
+                        option.legend.data = legends;
+                        option.series = Series; // 设置图表
+                        myChart.hideLoading();    //隐藏加载动画
+                        myChart.setOption(option,true);// 重新加载图表
+
+                        if(index_avcQuality=="AVC_Quality_Count"){
+                            document.getElementById("main_pie").style.display="";
+                            let ItemPie = function(){
+                            return {
+                                name:'',
+                                type:'pie',
+                                radius: '70%',
+                                center: ['50%', '50%'],
+                                emphasis:{
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                },
+                                data:[],
+                                }
+                            };
+                            let ItemData = function(){
+                                return{
+                                    name:'',
+                                    value:''
+                                }
+                            };
+                            option2.title.text="线上问题统计- "+search_interval_avcQuality;
+                            option2.title.subtext="全平台占比";
+                            let itPie = new ItemPie();
+                            let legends = [];
+                            let Series = [];
+                            for(let i=0;i < json.length;i++){
+                                legends.push(json[i].name);
+                                let itdata = new ItemData();
+                                itdata.name = json[i].name+"("+json[i].sdk+")";
+                                itdata.value = json[i].value_total;
+                                itPie.data.push(itdata);
+                            }
+                            Series.push(itPie);
+                            console.log(Series);
+                            option2.legend.data = legends;
+                            option2.series = Series; // 设置图表
+                            myPie.setOption(option2,true);// 重新加载图表
+                        }
+                    }
+                }
+        });
+        }
+    }
+
+    function genTable(){
+        var s = document.getElementById("selectDatabase");
+        selectDatabase = s.options[s.selectedIndex].text;
+        $.ajax({
+             type : "post",
+             url : "/getAVCInfo",    //请求发送到Servlet处
+             dataType : "json",        //返回数据形式为json
+             data:{
+                 selectDatabase:selectDatabase
+             },
+             error:function(){
+                    alert('请求数据失败,请检查选择条件！');
+                    myChart.hideLoading();
+                },success:function (data){
+                $("#show tbody").html("");
+                 var t = document.getElementById("showbodyAVC");
+                 var tr = document.createElement("tr");
+                 var td1 = document.createElement("th");
+                 td1.innerHTML = "No";
+                 var td2 = document.createElement("th");
+                 td2.innerHTML = "Version";
+                 var td3 = document.createElement("th");
+                 td3.innerHTML = "App";
+                 var td4 = document.createElement("th");
+                 td4.innerHTML = "Platform";
+                 var td5 = document.createElement("th");
+                 td5.innerHTML = "Scene";
+                 var td6 = document.createElement("th");
+                 td6.innerHTML = "Profile";
+
+
+                 tr.appendChild(td1);
+                 tr.appendChild(td2);
+                 tr.appendChild(td3);
+                 tr.appendChild(td4);
+                 tr.appendChild(td5);
+                 tr.appendChild(td6);
+                 if(selectDatabase=="Jira统计"){
+                     var td7 = document.createElement("th");
+                     td7.innerHTML = "Bugs";
+                     var td8 = document.createElement("th");
+                     td8.innerHTML = "Links";
+                     var tdEdit = document.createElement("th");
+                     tdEdit.innerHTML = "操作";
+                     tr.appendChild(td7);
+                     tr.appendChild(td8);
+                     tr.appendChild(tdEdit);
+                 }else {
+                    var td7 = document.createElement("th");
+                    td7.innerHTML = "Value";
+                    var tdEdit = document.createElement("th");
+                     tdEdit.innerHTML = "操作";
+                    tr.appendChild(td7);
+                    tr.appendChild(tdEdit);
+                 }
+                 t.appendChild(tr);
+                 for (i = 0; i < data.data.length; i++) {
+                     var tr2 = document.createElement("tr");
+                     var td11 = document.createElement("td");
+                     td11.innerHTML = data.data[i].No;
+                     var td22 = document.createElement("td");
+                     td22.innerHTML = data.data[i].Version;
+                     var td33 = document.createElement("td");
+                     td33.innerHTML = data.data[i].App;
+                     var td44 = document.createElement("td");
+                     td44.innerHTML = data.data[i].Platform;
+                     var td55 = document.createElement("td");
+                     td55.innerHTML = data.data[i].Scene;
+                     var td66 = document.createElement("td");
+                     td66.innerHTML = data.data[i].Profile;
+                     tr2.appendChild(td11);
+                     tr2.appendChild(td22);
+                     tr2.appendChild(td33);
+                     tr2.appendChild(td44);
+                     tr2.appendChild(td55);
+                     tr2.appendChild(td66);
+                     if(selectDatabase=="Jira统计"){
+                          var td77 = document.createElement("td");
+                          td77.innerHTML = data.data[i].Bugs;
+                          var td88 = document.createElement("td");
+                          td88.innerHTML = data.data[i].Links;
+                          td88.setAttribute("style","white-space:nowrap;overflow:hidden;text-overflow: ellipsis;");
+                          td88.setAttribute("title",data.data[i].Links);
+                          var tdEdit = document.createElement("td");
+                          tdEdit.innerHTML = '<a id="showReportByNo" href="#showAVCJiraReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
+                          tr2.appendChild(td77);
+                          tr2.appendChild(td88);
+                          tr2.appendChild(tdEdit);
+                     }else {
+                        var td77 = document.createElement("td");
+                        td77.innerHTML = data.data[i].Value;
+                        var tdEdit = document.createElement("td");
+                          tdEdit.innerHTML = '<a id="showReportByNo" href="#showAVCReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
+                          tr2.appendChild(td77);
+                          tr2.appendChild(tdEdit);
+                     }
+                     t.appendChild(tr2);
+                 }
+            }
+        })
+    }
+
+    $('#selectDatabase').on('changed.bs.select', function () {
+        genTable()
+    });
+
+    var cateid = 0;
+    $('#showAVCReportByNo-1').on('shown.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        cateid = button.data('id').split(",");
+        No = cateid[0];
+        index = cateid[1];
+        $.ajax({
+            url:'/getAVCInfoByNo',
+            type:'post',
+            dataType: 'json',
+            data:{
+                No:No,
+                index:index
+            },
+            error:function(){
+                alert('出现错误！');
+            },success:function (data){
+                let info = data.data[0];
+                $('#showAVCReportByNoNo').val(info.No);
+                $('#showAVCReportByNoVersion').val(info.Version);
+                $('#showAVCReportByNoApp').val(info.App);
+                $('#showAVCReportByNoPlatform').val(info.Platform);
+                $('#showAVCReportByNoScene').val(info.Scene);
+                $('#showAVCReportByNoProfile').val(info.Profile);
+                $('#showAVCReportByNoValue').val(info.Value);
+                $('#showAVCReportByNo-1').modal('show');
+            }
+        });
+    });
+
+    $('#showAVCJiraReportByNo-1').on('shown.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        cateid = button.data('id').split(",");
+        No = cateid[0];
+        index = cateid[1];
+        $.ajax({
+            url:'/getAVCInfoByNo',
+            type:'post',
+            dataType: 'json',
+            data:{
+                No:No,
+                index:index
+            },
+            error:function(){
+                alert('出现错误！');
+            },success:function (data){
+                let info = data.data[0];
+                $('#showAVCJiraReportByNoNo').val(info.No);
+                $('#showAVCJiraReportByNoVersion').val(info.Version);
+                $('#showAVCJiraReportByNoApp').val(info.App);
+                $('#showAVCJiraReportByNoPlatform').val(info.Platform);
+                $('#showAVCJiraReportByNoScene').val(info.Scene);
+                $('#showAVCJiraReportByNoProfile').val(info.Profile);
+                $('#showAVCJiraReportByNoBugs').val(info.Bugs);
+                $('#showAVCJiraReportByNoLinks').val(info.Links);
+                $('#showAVCJiraReportByNo-1').modal('show');
+            }
+        });
+    });
+
+    $('#insert-showAVCReport-1').on('shown.bs.modal', function () {
+        let value = $("#selectDatabase option:selected").val();
+        if (value && value== "Jira统计"){
+            $('#insertIndex').val(value);
+            document.getElementById('Bugs_insert').style.display="";
+            document.getElementById('Links_insert').style.display="";
+            document.getElementById('Value_insert').style.display="None";
+            $('#insert-showAVCReport-1').modal('show');
+        }
+        if (value && value != "Jira统计"){
+            $('#insertIndex').val(value);
+            document.getElementById('Bugs_insert').style.display="None";
+            document.getElementById('Links_insert').style.display="None";
+            document.getElementById('Value_insert').style.display="";
+            $('#insert-showAVCReport-1').modal('show');
+        }
+        if (!value)
+        {
+            my_showTip("请选择一项需要更新的数据表");
+            $('#insert-showAVCReport-1').modal('hide');
+        }
+    });
+
+    $('#modal-container-showAVCReport-1').on('hide.bs.modal', function () {
+        location.reload();
+    });
+
+    function updateAVC() {
+    var s = document.getElementById("selectDatabase");
+    var selectDatabase = s.options[s.selectedIndex].text;
+    var No = $("#showAVCReportByNoNo").val();
+    var Version = $("#showAVCReportByNoVersion").val();
+	var App = $("#showAVCReportByNoApp").val();
+	var Platform = $("#showAVCReportByNoPlatform").val();
+	var Scene = $("#showAVCReportByNoScene").val();
+	var Profile = $("#showAVCReportByNoProfile").val();
+	var Value = $("#showAVCReportByNoValue").val();
+    $.ajax({
+        url:'/updateAVCInfoByNo',
+        type:'post',
+        dataType: 'json',
+        data:{
+            database:selectDatabase,
+            No:No,
+            Version:Version,
+            App:App,
+            Platform:Platform,
+            Scene:Scene,
+            Profile:Profile,
+            Value:Value
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#showAVCReportByNo-1').modal('hide');
+                genTable();
+                {#location.reload();#}
+            }else {
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
+            }
+
+        }
+    })
+}
+
+    function updateAVCJira() {
+    var s = document.getElementById("selectDatabase");
+    var selectDatabase = s.options[s.selectedIndex].text;
+    var No = $("#showAVCJiraReportByNoNo").val();
+    var Version = $("#showAVCJiraReportByNoVersion").val();
+	var App = $("#showAVCJiraReportByNoApp").val();
+	var Platform = $("#showAVCJiraReportByNoPlatform").val();
+	var Scene = $("#showAVCJiraReportByNoScene").val();
+	var Profile = $("#showAVCJiraReportByNoProfile").val();
+	var Bugs = $("#showAVCJiraReportByNoBugs").val();
+	var Links = $("#showAVCJiraReportByNoLinks").val();
+    $.ajax({
+        url:'/updateAVCInfoByNo',
+        type:'post',
+        dataType: 'json',
+        data:{
+            database:selectDatabase,
+            No:No,
+            Version:Version,
+            App:App,
+            Platform:Platform,
+            Scene:Scene,
+            Profile:Profile,
+            Bugs:Bugs,
+            Links:Links
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#showAVCJiraReportByNo-1').modal('hide');
+                genTable();
+                {#location.reload();#}
+            }else {
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
+            }
+
+        }
+    })
+}
+
+    function insertAVC() {
+        var btn = $("#insertAVCButton");
+        btn.attr("disabled", true);  //按钮禁止点击
+    var s = document.getElementById("insertIndex");
+    var selectDatabase = s.value;
+	var Version = $("#insertAVCReportByNoVersion").val();
+	var App = $("#insertAVCReportByNoApp").val();
+	var Platform = $("#insertAVCReportByNoPlatform").val();
+	var Scene = $("#insertAVCReportByNoScene").val();
+	var Profile = $("#insertAVCReportByNoProfile").val();
+	var Value = $("#insertAVCReportByNoValue").val();
+	var Bugs = $("#insertAVCReportByNoBugs").val();
+	var Links = $("#insertAVCReportByNoLinks").val();
+    $.ajax({
+        url:'/insertAVCInfoByNo',
+        type:'post',
+        dataType: 'json',
+        data:{
+            database:selectDatabase,
+            Version:Version,
+            App:App,
+            Platform:Platform,
+            Scene:Scene,
+            Profile:Profile,
+            Value:Value,
+            Bugs:Bugs,
+            Links:Links
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            btn.attr("disabled", false);
+            if(data.status == 200){
+                $('#insert-showAVCReport-1').modal('hide');
+                genTable();
+            }else {
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
+            }
+
+        }
+    })
+}
+
+    function deleteAVC() {
+        var s = document.getElementById("selectDatabase");
+        var selectDatabase = s.options[s.selectedIndex].text;
+        if(selectDatabase=="Jira统计"){
+           var No = $("#showAVCJiraReportByNoNo").val();
+        }
+        else {
+            var No = $("#showAVCReportByNoNo").val();
+        }
+        $.ajax({
+        url:'/deleteAVCInfoByNo',
+        type:'post',
+        dataType: 'json',
+        data:{
+            No:No,
+            database:selectDatabase,
+        },
+        error:function(){
+            alert('出现错误！');
+        },success:function (data){
+            if(data.status == 200){
+                $('#showAVCReportByNo-1').modal('hide');
+                $('#showAVCJiraReportByNo-1').modal('hide');
+                genTable();
+                {#location.reload();#}
+            }else {
+                {#alert("无法更新配置信息！！！")#}
+                my_showTip(data.message);
+            }
+
+        }
+    })
+
+    }
+
+    </script>
+    <style type="text/css">
+        .modal{overflow:auto!important;}
+    </style>
+
+{% endblock %}

@@ -7,6 +7,7 @@ from script.lib import *
 from script.countTestPlan import *
 from script.excel2xml import *
 import script.excel2jira as e2j
+import re
 app = Flask(__name__)
 app.secret_key="asdada1231"
 bootstrap = Bootstrap(app)
@@ -757,5 +758,77 @@ def deleteAVCInfoByNo():
             return jsonify({'status': 200, 'message': 'pass'})
         else:
             return jsonify({'status': 400, 'message': 'error'})
+
+
+# AVC全平台质量跟踪报告
+@app.route("/showAVCQualityReport",methods=['GET','POST'])
+def showAVCQualityReport():
+    platforms = []
+    values = getAVCQuality()
+    for value in values:
+        if value.get("Platform") not in platforms:
+            platforms.append(value.get("Platform"))
+    return render_template("showDir/showAVCQualityReport.html", platforms=platforms)
+
+@app.route("/getAVCQualityVersionByPlatform",methods=['GET'])
+def getAVCQualityVersionByPlatform():
+    Platform = request.args.get("Platform")
+    last_three_version_checked = request.args.get("last_three_version_checked")
+    versions = []
+    values = getAVCQualityVersionByPlatformSQL(Platform)
+    if last_three_version_checked == "true":
+        values = values[-3:]
+    for value in values:
+        if value.get("Version") not in versions:
+            versions.append(value.get("Version"))
+    return jsonify({'status': 200, 'data': versions})
+
+@app.route("/showAVCQualityQearyResult",methods=['GET','POST'])
+def showAVCQualityQearyResult():
+    data = json.loads(request.form.get('data'))
+    version_checkList = data.get('version_check')
+    selectPlatform = data.get('selectPlatform')
+    search_interval_avcQuality = data.get('search_interval_avcQuality')
+    index_avcQuality = data.get('index_avcQuality')
+    values = getAVCQualityPerInfo(version_checkList,selectPlatform,search_interval_avcQuality,index_avcQuality)
+    new_data = []
+    new_xlist = []
+    new_value = []
+    if index_avcQuality=="AVC_Quality_Crash":
+        for value in values:
+            new_xlist.append(value['Version'])
+            new_value.append(value['Value'])
+        new_data.append({"name": selectPlatform+"_Crash",
+                         "data": new_value,
+                         "xcontent": new_xlist
+                         })
+    else:
+        counts=["Native", "RTM", "WebRTC", "Doc", "App"]
+        for count in counts:
+            new_xlist = []
+            new_value = []
+            value_total = 0
+            sdkList = []
+            for value in values:
+                new_xlist.append(value['Time'].strftime('%m') + "月")
+                val = value[count].split("(")[0]
+                sdkRe = re.compile(r'[(](.*)[)]', re.S)  #贪婪匹配
+                sdkList += re.findall(sdkRe, value[count])
+                new_value.append(val)
+                value_total += int(val)
+            new_data.append({"name": count,
+                             "data": new_value,
+                             "xcontent": new_xlist,
+                             "value_total":value_total,
+                             "sdk":"/".join(sdkList)
+                             })
+    datas = {
+        "data": new_data
+    }
+    print(new_data)
+    content = json.dumps(datas)
+    resp = Response_headers(content)
+    return resp
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)

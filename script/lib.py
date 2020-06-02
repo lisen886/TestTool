@@ -296,3 +296,22 @@ def deleteAVCInfoByNoSQL(data):
     res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
     addTestToolLogSerever(session.get('username'), cmd)
     return res
+
+# AVC全平台质量跟踪报告
+def getAVCQuality():
+    cmd = 'SELECT * FROM AVC_Quality_Crash order by Version ASC'
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getAVCQualityVersionByPlatformSQL(Platform):
+    cmd = "SELECT * FROM AVC_Quality_Crash where Platform='{}' order by Version ASC".format(Platform)
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getAVCQualityPerInfo(version,selectPlatform,search_interval,index):
+    if index=="AVC_Quality_Crash":
+        cmd = "SELECT * FROM {} Where Platform = '{}' and Time>DATE_SUB(CURDATE(), INTERVAL {}) and Version in ".format(index,selectPlatform,search_interval) + str(version).replace("[","(").replace("]",")")
+    elif index == "AVC_Quality_Count":
+        cmd = "SELECT * FROM {} Where Platform = '{}' and Time>DATE_SUB(CURDATE(), INTERVAL {})".format(index,selectPlatform,search_interval)
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
