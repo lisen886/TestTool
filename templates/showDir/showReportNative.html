@@ -74,6 +74,15 @@
                             <input type="checkbox" name="cloudCrashRate" value="cloudCrashRate">&nbsp; 云测崩溃率&nbsp;&nbsp;
                         </td>
 					</tr>
+                    <tr>
+                        <td>
+
+                        </td>
+						<td>
+                            <input type="checkbox" name="codeChangeLine" value="codeChangeLine">&nbsp; 代码改动行数&nbsp;&nbsp;
+                            <input type="checkbox" name="bugsForChange" value="bugsForChange">&nbsp; 万行改动问题数&nbsp;&nbsp;
+                        </td>
+					</tr>
 				</tbody>
 			</table>
 				</div>
@@ -134,6 +143,8 @@
                         regressionPhaseRate：<input type="text" id="regressionPhaseRate"><p></p>
                         fallbackRate：<input type="text" id="fallbackRate"><p></p>
                         cloudCrashRate：<input type="text" id="cloudCrashRate"><p></p>
+                        codeChangeLine：<input type="text" id="codeChangeLine"><p></p>
+                        bugsForChange：<input type="text" id="bugsForChange"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -171,6 +182,8 @@
                         regressionPhaseRate：<input type="text" id="insert-regressionPhaseRate"><p></p>
                         fallbackRate：<input type="text" id="insert-fallbackRate"><p></p>
                         cloudCrashRate：<input type="text" id="insert-cloudCrashRate"><p></p>
+                        codeChangeLine：<input type="text" id="insert-codeChangeLine"><p></p>
+                        bugsForChange：<input type="text" id="insert-bugsForChange"><p></p>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -300,6 +313,17 @@
                 if (obj_cloudCrashRate[i].checked)
                     index_checkList.push(obj_cloudCrashRate[i].value);
         }
+
+        let obj_codeChangeLine = document.getElementsByName("codeChangeLine");
+        for (let i = 0; i < obj_codeChangeLine.length; i++) {
+                if (obj_codeChangeLine[i].checked)
+                    index_checkList.push(obj_codeChangeLine[i].value);
+        }
+        let obj_bugsForChange = document.getElementsByName("bugsForChange");
+        for (let i = 0; i < obj_bugsForChange.length; i++) {
+                if (obj_bugsForChange[i].checked)
+                    index_checkList.push(obj_bugsForChange[i].value);
+        }
         var params = {
             data:JSON.stringify({
                 version_check:version_native_checkList,
@@ -402,7 +426,12 @@
                  var td15 = document.createElement("th");
                  td15.innerHTML = "云测崩溃率";
                  var td16 = document.createElement("th");
-                 td16.innerHTML = "操作";
+                 td16.innerHTML = "代码改动行数";
+                 var td17 = document.createElement("th");
+                 td17.innerHTML = "万行改动问题数";
+
+                 var tdop = document.createElement("th");
+                 tdop.innerHTML = "操作";
                  tr.appendChild(td1);
                  tr.appendChild(td2);
                  tr.appendChild(td3);
@@ -419,6 +448,8 @@
                  tr.appendChild(td14);
                  tr.appendChild(td15);
                  tr.appendChild(td16);
+                 tr.appendChild(td17);
+                 tr.appendChild(tdop);
                  t.appendChild(tr);
                  for (i = 0; i < data.data.length; i++) {
                      var tr2 = document.createElement("tr");
@@ -454,7 +485,11 @@
                      var td1515 = document.createElement("td");
                      td1515.innerHTML = data.data[i].cloudCrashRate;
                      var td1616 = document.createElement("td");
-                     td1616.innerHTML = '<a id="showReportByNo" href="#showReportByVersion-1" data-toggle="modal" data-id="'+data.data[i].version+','+selectDatabase+'">更新|删除';
+                     td1616.innerHTML = data.data[i].codeChangeLine;
+                     var td1717 = document.createElement("td");
+                     td1717.innerHTML = data.data[i].bugsForChange;
+                     var tdopop = document.createElement("td");
+                     tdopop.innerHTML = '<a id="showReportByNo" href="#showReportByVersion-1" data-toggle="modal" data-id="'+data.data[i].version+','+selectDatabase+'">更新|删除';
                      tr2.appendChild(td11);
                      tr2.appendChild(td22);
                      tr2.appendChild(td33);
@@ -471,6 +506,8 @@
                      tr2.appendChild(td1414);
                      tr2.appendChild(td1515);
                      tr2.appendChild(td1616);
+                     tr2.appendChild(td1717);
+                     tr2.appendChild(tdopop);
                      t.appendChild(tr2);
                  }
             }
@@ -514,6 +551,8 @@
                 $('#regressionPhaseRate').val(info.regressionPhaseRate);
                 $('#fallbackRate').val(info.fallbackRate);
                 $('#cloudCrashRate').val(info.cloudCrashRate);
+                $('#codeChangeLine').val(info.codeChangeLine);
+                $('#bugsForChange').val(info.bugsForChange);
                 $('#showReportByVersion-1').modal('show');
             }
         });
@@ -553,6 +592,8 @@
 	var regressionPhaseRate = $("#regressionPhaseRate").val();
 	var fallbackRate = $("#fallbackRate").val();
 	var cloudCrashRate = $("#cloudCrashRate").val();
+	var codeChangeLine = $('#codeChangeLine').val();
+	var bugsForChange = $('#bugsForChange').val()
     $.ajax({
         url:'/updateNativeInfo',
         type:'post',
@@ -574,7 +615,8 @@
             regressionPhaseRate:regressionPhaseRate,
             fallbackRate:fallbackRate,
             cloudCrashRate:cloudCrashRate,
-
+            codeChangeLine:codeChangeLine,
+            bugsForChange:bugsForChange
         },
         error:function(){
             alert('出现错误！');
@@ -610,6 +652,8 @@
 	var regressionPhaseRate = $("#insert-regressionPhaseRate").val();
 	var fallbackRate = $("#insert-fallbackRate").val();
 	var cloudCrashRate = $("#insert-cloudCrashRate").val();
+	var codeChangeLine = $("#insert-codeChangeLine").val();
+	var bugsForChange = $("#insert-bugsForChange").val();
     $.ajax({
         url:'/insertNativeInfo',
         type:'post',
@@ -631,6 +675,8 @@
             regressionPhaseRate:regressionPhaseRate,
             fallbackRate:fallbackRate,
             cloudCrashRate:cloudCrashRate,
+            codeChangeLine:codeChangeLine,
+            bugsForChange:bugsForChange
         },
         error:function(){
             alert('出现错误！');
