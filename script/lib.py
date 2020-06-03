@@ -315,3 +315,37 @@ def getAVCQualityPerInfo(version,selectPlatform,search_interval,index):
         cmd = "SELECT * FROM {} Where Platform = '{}' and Time>DATE_SUB(CURDATE(), INTERVAL {})".format(index,selectPlatform,search_interval)
     values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
     return values
+
+def getAVCQualityInfoSQL(index):
+    cmd = 'SELECT * FROM {}'.format(index)
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def getAVCQualityInfoByNoSQL(No,index):
+    cmd = 'SELECT * FROM ' + index+' where No ='+json.dumps(No)
+    values = mysql_query(host=host,username=username, password=password,database=Native_DB,cmd=cmd,cursorclass="dict")
+    return values
+
+def updateAVCQualityInfoByNoSQL(data):
+    if data.get("database")[0] == "AVC_Quality_Crash":
+        cmd = "update AVC_Quality_Crash set Platform='{Platform[0]}',Version='{Version[0]}',Time='{Time[0]}',Value='{Value[0]}' where No={No[0]}".format(**data)
+    else:
+        cmd = "update AVC_Quality_Count set Platform='{Platform[0]}',Native='{Native[0]}',RTM='{RTM[0]}',WebRTC='{WebRTC[0]}',Doc='{Doc[0]}',App='{App[0]}',Time='{Time[0]}' where No={No[0]}".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
+
+def insertAVCQualityInfoByNoSQL(data):
+    if data.get("database")[0] == "AVC_Quality_Crash":
+        cmd = "INSERT INTO AVC_Quality_Crash set Platform='{Platform[0]}',Version='{Version[0]}',Time='{Time[0]}',Value='{Value[0]}'".format(**data)
+    else:
+        cmd = "INSERT INTO AVC_Quality_Count set Platform='{Platform[0]}',Native='{Native[0]}',RTM='{RTM[0]}',WebRTC='{WebRTC[0]}',Doc='{Doc[0]}',App='{App[0]}',Time='{Time[0]}'".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res
+
+def deleteAVCQualityInfoByNoSQL(data):
+    cmd = "DELETE FROM {database[0]} where No='{No[0]}'".format(**data)
+    res = mysql_update(host=host,username=username, password=password,database=Native_DB,cmd=cmd)
+    addTestToolLogSerever(session.get('username'), cmd)
+    return res

@@ -50,32 +50,29 @@
 				</div>
                 <div class="panel-footer">
                     <button type="button" class="btn btn-primary" onclick="searchAVCQuality()" id="btn_search">查找</button>
-                    <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showAVCReport-1" data-toggle="modal">编辑</button>
+                    <button type="button" class="btn btn-primary" id="btn_add" href="#modal-container-showAVCQualityReport-1" data-toggle="modal">编辑</button>
                 </div>
             </div>
 		</div>
 	</div>
 </div>
 <div class="col-md-12 column">
-    <div class="modal fade" id="modal-container-showAVCReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-container-showAVCQualityReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="width:800px">
             <div class="modal-content">
                 <div class="modal-header">
                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <div class="form-group">
                         <select id="selectDatabase" class="selectpicker show-tick" title="请选择一项" data-live-search="true" data-size="5">
-                            <option>内存</option>
-                            <option>CPU</option>
-                            <option>GPU</option>
-                            <option>冷启动时长</option>
-                            <option>Jira统计</option>
+                            <option value="AVC_Quality_Crash">Crash率</option>
+                            <option value="AVC_Quality_Count">线上问题统计</option>
                         </select>
-                        <button type="button" class="btn btn-primary" id="btn_add" href="#insert-showAVCReport-1" data-toggle="modal">新增</button>
+                        <button type="button" class="btn btn-primary" id="btn_add" href="#insert-showAVCQualityReport-1" data-toggle="modal">新增</button>
 				    </div>
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed" id="show" style="table-layout:fixed;word-wrap:break-word;">
-                        <tbody id="showbodyAVC">
+                        <tbody id="showbodyAVCQuality">
                         </tbody>
                     </table>
                 </div>
@@ -83,7 +80,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="showAVCReportByNo-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="showAVCQualityReportByNo-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -94,53 +91,27 @@
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered table-hover table-condensed">
-                        No：<input type="text" id="showAVCReportByNoNo" disabled="disabled"/><p></p>
-                        Version：<input type="text" id="showAVCReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p>
-                        App：<input type="text" id="showAVCReportByNoApp" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/><p></p>
-                        Platform：<input type="text" id="showAVCReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
-                        Scene：<input type="text" id="showAVCReportByNoScene" onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"><p></p>
-                        Profile：<input type="text" id="showAVCReportByNoProfile" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
-                        Value：<input type="text" id="showAVCReportByNoValue"><p></p>
+                        No：<input type="text" id="showAVCQualityReportByNoNo" disabled="disabled"/><p></p>
+                        Platform：<input type="text" id="showAVCQualityReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
+                        <span id = "Version_show">Version：<input type="text" id="showAVCQualityReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p></span>
+                        <span id = "Native_show">Native：<input type="text" id="showAVCQualityReportByNoNative" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        <span id = "RTM_show">RTM：<input type="text" id="showAVCQualityReportByNoRTM" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        <span id = "WebRTC_show">WebRTC：<input type="text" id="showAVCQualityReportByNoWebRTC" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        <span id = "Doc_show">Doc：<input type="text" id="showAVCQualityReportByNoDoc" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        <span id = "App_show">App：<input type="text" id="showAVCQualityReportByNoApp" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        Time：<input type="text" id="showAVCQualityReportByNoTime" onkeyup="this.value=this.value.replace(/\D/g,'');"><p></p>
+                        <span id = "Value_show">Value：<input type="text" id="showAVCQualityReportByNoValue"><p></p></span>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="updateAVC()">更新</button>
-                    <button type="button" class="btn btn-primary" onclick="my_confirm(deleteAVC,'','确认是否删除')">删除</button>
+                    <button type="button" class="btn btn-primary" onclick="updateAVCQuality()">更新</button>
+                    <button type="button" class="btn btn-primary" onclick="my_confirm(deleteAVCQuality,'','确认是否删除')">删除</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="showAVCJiraReportByNo-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <div class="form-group">
-                        更新信息
-				    </div>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-bordered table-hover table-condensed">
-                        No：<input type="text" id="showAVCJiraReportByNoNo" disabled="disabled"/><p></p>
-                        Version：<input type="text" id="showAVCJiraReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p>
-                        App：<input type="text" id="showAVCJiraReportByNoApp" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/><p></p>
-                        Platform：<input type="text" id="showAVCJiraReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
-                        Scene：<input type="text" id="showAVCJiraReportByNoScene" onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"><p></p>
-                        Profile：<input type="text" id="showAVCJiraReportByNoProfile" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
-                        Bugs：<input type="text" id="showAVCJiraReportByNoBugs"><p></p>
-                        Links：<input type="text" id="showAVCJiraReportByNoLinks"><p></p>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="updateAVCJira()">更新</button>
-                    <button type="button" class="btn btn-primary" onclick="my_confirm(deleteAVC,'','确认是否删除')">删除</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="insert-showAVCReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="insert-showAVCQualityReport-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -153,19 +124,20 @@
                     <table class="table table-bordered table-hover table-condensed">
                         Index：<input type="text" id="insertIndex" disabled="disabled"/><p></p>
 
-                        No：<input type="text" id="insertAVCReportByNoNo" disabled="disabled" value="自动递增"/><p></p>
-                        Version：<input type="text" id="insertAVCReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p>
-                        App：<input type="text" id="insertAVCReportByNoApp" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"/><p></p>
-                        Platform：<input type="text" id="insertAVCReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
-                        Scene：<input type="text" id="insertAVCReportByNoScene" onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"><p></p>
-                        Profile：<input type="text" id="insertAVCReportByNoProfile" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
-                        <span id = "Value_insert">Value：<input type="text" id="insertAVCReportByNoValue"><p></p></span>
-                        <span id = "Bugs_insert" style="display: none">Bugs：<input type="text" id="insertAVCReportByNoBugs"><p></p></span>
-                        <span id = "Links_insert" style="display: none">Links：<input type="text" id="insertAVCReportByNoLinks"><p></p></span>
+                        No：<input type="text" id="insertAVCQualityReportByNoNo" disabled="disabled" value="自动递增"/><p></p>
+                        Platform：<input type="text" id="insertAVCQualityReportByNoPlatform" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')"><p></p>
+                        <span id = "Version_insert">Version：<input type="text" id="insertAVCQualityReportByNoVersion" onkeyup="value=value.replace(/[^\d.]/g,'')"/><p></p></span>
+                        <span id = "Native_insert">Native：<input type="text" id="insertAVCQualityReportByNoNative" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        <span id = "RTM_insert">RTM：<input type="text" id="insertAVCQualityReportByNoRTM" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        <span id = "WebRTC_insert">WebRTC：<input type="text" id="insertAVCQualityReportByNoWebRTC" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        <span id = "Doc_insert">Doc：<input type="text" id="insertAVCQualityReportByNoDoc" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        <span id = "App_insert">App：<input type="text" id="insertAVCQualityReportByNoApp" onkeyup="value=value.replace(/[^\d().]/g,'')"/><p></p></span>
+                        Time：<input type="date" id="insertAVCQualityReportByNoTime" onkeyup="this.value=this.value.replace(/\D/g,'');"><p></p>
+                        <span id = "Value_insert">Value：<input type="text" id="insertAVCQualityReportByNoValue"><p></p></span>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="insertAVCButton" onclick="insertAVC()">新增</button>
+                    <button type="button" class="btn btn-primary" id="insertAVCQualityButton" onclick="insertAVCQuality()">新增</button>
                 </div>
             </div>
         </div>
@@ -482,7 +454,6 @@
                                 itPie.data.push(itdata);
                             }
                             Series.push(itPie);
-                            console.log(Series);
                             option2.legend.data = legends;
                             option2.series = Series; // 设置图表
                             myPie.setOption(option2,true);// 重新加载图表
@@ -495,10 +466,10 @@
 
     function genTable(){
         var s = document.getElementById("selectDatabase");
-        selectDatabase = s.options[s.selectedIndex].text;
+        selectDatabase = s.options[s.selectedIndex].value;
         $.ajax({
              type : "post",
-             url : "/getAVCInfo",    //请求发送到Servlet处
+             url : "/getAVCQualityInfo",    //请求发送到Servlet处
              dataType : "json",        //返回数据形式为json
              data:{
                  selectDatabase:selectDatabase
@@ -508,45 +479,49 @@
                     myChart.hideLoading();
                 },success:function (data){
                 $("#show tbody").html("");
-                 var t = document.getElementById("showbodyAVC");
+                 var t = document.getElementById("showbodyAVCQuality");
                  var tr = document.createElement("tr");
                  var td1 = document.createElement("th");
                  td1.innerHTML = "No";
                  var td2 = document.createElement("th");
-                 td2.innerHTML = "Version";
-                 var td3 = document.createElement("th");
-                 td3.innerHTML = "App";
-                 var td4 = document.createElement("th");
-                 td4.innerHTML = "Platform";
-                 var td5 = document.createElement("th");
-                 td5.innerHTML = "Scene";
-                 var td6 = document.createElement("th");
-                 td6.innerHTML = "Profile";
-
-
+                 td2.innerHTML = "Platform";
                  tr.appendChild(td1);
                  tr.appendChild(td2);
-                 tr.appendChild(td3);
-                 tr.appendChild(td4);
-                 tr.appendChild(td5);
-                 tr.appendChild(td6);
-                 if(selectDatabase=="Jira统计"){
-                     var td7 = document.createElement("th");
-                     td7.innerHTML = "Bugs";
-                     var td8 = document.createElement("th");
-                     td8.innerHTML = "Links";
+                 if(selectDatabase=="AVC_Quality_Crash"){
+                     var td3 = document.createElement("th");
+                     td3.innerHTML = "Version";
+                     var td4 = document.createElement("th");
+                     td4.innerHTML = "Time";
+                     var td5 = document.createElement("th");
+                     td5.innerHTML = "Value";
                      var tdEdit = document.createElement("th");
                      tdEdit.innerHTML = "操作";
+                     tr.appendChild(td3);
+                     tr.appendChild(td4);
+                     tr.appendChild(td5);
+                     tr.appendChild(tdEdit);
+                 }else {
+                    var td3 = document.createElement("th");
+                     td3.innerHTML = "Native";
+                     var td4 = document.createElement("th");
+                     td4.innerHTML = "RTM";
+                     var td5 = document.createElement("th");
+                     td5.innerHTML = "WebRTC";
+                     var td6 = document.createElement("th");
+                     td6.innerHTML = "Doc";
+                     var td7 = document.createElement("th");
+                     td7.innerHTML = "App";
+                     var td8 = document.createElement("th");
+                     td8.innerHTML = "Time";
+                     var tdEdit = document.createElement("th");
+                     tdEdit.innerHTML = "操作";
+                     tr.appendChild(td3);
+                     tr.appendChild(td4);
+                     tr.appendChild(td5);
+                     tr.appendChild(td6);
                      tr.appendChild(td7);
                      tr.appendChild(td8);
                      tr.appendChild(tdEdit);
-                 }else {
-                    var td7 = document.createElement("th");
-                    td7.innerHTML = "Value";
-                    var tdEdit = document.createElement("th");
-                     tdEdit.innerHTML = "操作";
-                    tr.appendChild(td7);
-                    tr.appendChild(tdEdit);
                  }
                  t.appendChild(tr);
                  for (i = 0; i < data.data.length; i++) {
@@ -554,39 +529,43 @@
                      var td11 = document.createElement("td");
                      td11.innerHTML = data.data[i].No;
                      var td22 = document.createElement("td");
-                     td22.innerHTML = data.data[i].Version;
-                     var td33 = document.createElement("td");
-                     td33.innerHTML = data.data[i].App;
-                     var td44 = document.createElement("td");
-                     td44.innerHTML = data.data[i].Platform;
-                     var td55 = document.createElement("td");
-                     td55.innerHTML = data.data[i].Scene;
-                     var td66 = document.createElement("td");
-                     td66.innerHTML = data.data[i].Profile;
+                     td22.innerHTML = data.data[i].Platform;
                      tr2.appendChild(td11);
                      tr2.appendChild(td22);
-                     tr2.appendChild(td33);
-                     tr2.appendChild(td44);
-                     tr2.appendChild(td55);
-                     tr2.appendChild(td66);
-                     if(selectDatabase=="Jira统计"){
-                          var td77 = document.createElement("td");
-                          td77.innerHTML = data.data[i].Bugs;
-                          var td88 = document.createElement("td");
-                          td88.innerHTML = data.data[i].Links;
-                          td88.setAttribute("style","white-space:nowrap;overflow:hidden;text-overflow: ellipsis;");
-                          td88.setAttribute("title",data.data[i].Links);
-                          var tdEdit = document.createElement("td");
-                          tdEdit.innerHTML = '<a id="showReportByNo" href="#showAVCJiraReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
-                          tr2.appendChild(td77);
-                          tr2.appendChild(td88);
+                     if(selectDatabase=="AVC_Quality_Crash"){
+                          let td33 = document.createElement("td");
+                          td33.innerHTML = data.data[i].Version;
+                          let td44 = document.createElement("td");
+                          td44.innerHTML = formatDateTime(new Date(Date.parse(data.data[i].Time)));
+                          let td55 = document.createElement("td");
+                          td55.innerHTML = data.data[i].Value;
+                          let tdEdit = document.createElement("td");
+                          tdEdit.innerHTML = '<a id="showReportByNo" href="#showAVCQualityReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
+                          tr2.appendChild(td33);
+                          tr2.appendChild(td44);
+                          tr2.appendChild(td55);
                           tr2.appendChild(tdEdit);
                      }else {
-                        var td77 = document.createElement("td");
-                        td77.innerHTML = data.data[i].Value;
-                        var tdEdit = document.createElement("td");
-                          tdEdit.innerHTML = '<a id="showReportByNo" href="#showAVCReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
+                          let td33 = document.createElement("td");
+                          td33.innerHTML = data.data[i].Native;
+                          let td44 = document.createElement("td");
+                          td44.innerHTML = data.data[i].RTM;
+                          let td55 = document.createElement("td");
+                          td55.innerHTML = data.data[i].WebRTC;
+                          let td66 = document.createElement("td");
+                          td66.innerHTML = data.data[i].Doc;
+                          let td77 = document.createElement("td");
+                          td77.innerHTML = data.data[i].App;
+                          let td88 = document.createElement("td");
+                          td88.innerHTML = formatDateTime(new Date(Date.parse(data.data[i].Time)));
+                          var tdEdit = document.createElement("td");
+                          tdEdit.innerHTML = '<a id="showReportByNo" href="#showAVCQualityReportByNo-1" data-toggle="modal" data-id="'+data.data[i].No+','+selectDatabase+'">更新|删除';
+                          tr2.appendChild(td33);
+                          tr2.appendChild(td44);
+                          tr2.appendChild(td55);
+                          tr2.appendChild(td66);
                           tr2.appendChild(td77);
+                          tr2.appendChild(td88);
                           tr2.appendChild(tdEdit);
                      }
                      t.appendChild(tr2);
@@ -600,13 +579,13 @@
     });
 
     var cateid = 0;
-    $('#showAVCReportByNo-1').on('shown.bs.modal', function (event) {
+    $('#showAVCQualityReportByNo-1').on('shown.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         cateid = button.data('id').split(",");
         No = cateid[0];
         index = cateid[1];
         $.ajax({
-            url:'/getAVCInfoByNo',
+            url:'/getAVCQualityInfoByNo',
             type:'post',
             dataType: 'json',
             data:{
@@ -617,104 +596,111 @@
                 alert('出现错误！');
             },success:function (data){
                 let info = data.data[0];
-                $('#showAVCReportByNoNo').val(info.No);
-                $('#showAVCReportByNoVersion').val(info.Version);
-                $('#showAVCReportByNoApp').val(info.App);
-                $('#showAVCReportByNoPlatform').val(info.Platform);
-                $('#showAVCReportByNoScene').val(info.Scene);
-                $('#showAVCReportByNoProfile').val(info.Profile);
-                $('#showAVCReportByNoValue').val(info.Value);
-                $('#showAVCReportByNo-1').modal('show');
+                $('#showAVCQualityReportByNoNo').val(info.No);
+                $('#showAVCQualityReportByNoPlatform').val(info.Platform);
+                if (index && index== "AVC_Quality_Crash"){
+                    document.getElementById('Version_show').style.display="";
+                    document.getElementById('Value_show').style.display="";
+                    document.getElementById('Native_show').style.display="None";
+                    document.getElementById('RTM_show').style.display="None";
+                    document.getElementById('WebRTC_show').style.display="None";
+                    document.getElementById('Doc_show').style.display="None";
+                    document.getElementById('App_show').style.display="None";
+                    $('#showAVCQualityReportByNoVersion').val(info.Version);
+                    $('#showAVCQualityReportByNoTime').val(formatDateTime(new Date(Date.parse(info.Time))));
+                    $('#showAVCQualityReportByNoValue').val(info.Value);
+                }
+                else{
+                    document.getElementById('Version_show').style.display="None";
+                    document.getElementById('Value_show').style.display="None";
+                    document.getElementById('Native_show').style.display="";
+                    document.getElementById('RTM_show').style.display="";
+                    document.getElementById('WebRTC_show').style.display="";
+                    document.getElementById('Doc_show').style.display="";
+                    document.getElementById('App_show').style.display="";
+                    $('#showAVCQualityReportByNoNative').val(info.Native);
+                    $('#showAVCQualityReportByNoRTM').val(info.RTM);
+                    $('#showAVCQualityReportByNoWebRTC').val(info.WebRTC);
+                    $('#showAVCQualityReportByNoDoc').val(info.Doc);
+                    $('#showAVCQualityReportByNoApp').val(info.App);
+                    $('#showAVCQualityReportByNoTime').val(formatDateTime(new Date(Date.parse(info.Time))));
+                }
+                $('#showAVCQualityReportByNo-1').modal('show');
             }
         });
     });
 
-    $('#showAVCJiraReportByNo-1').on('shown.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        cateid = button.data('id').split(",");
-        No = cateid[0];
-        index = cateid[1];
-        $.ajax({
-            url:'/getAVCInfoByNo',
-            type:'post',
-            dataType: 'json',
-            data:{
-                No:No,
-                index:index
-            },
-            error:function(){
-                alert('出现错误！');
-            },success:function (data){
-                let info = data.data[0];
-                $('#showAVCJiraReportByNoNo').val(info.No);
-                $('#showAVCJiraReportByNoVersion').val(info.Version);
-                $('#showAVCJiraReportByNoApp').val(info.App);
-                $('#showAVCJiraReportByNoPlatform').val(info.Platform);
-                $('#showAVCJiraReportByNoScene').val(info.Scene);
-                $('#showAVCJiraReportByNoProfile').val(info.Profile);
-                $('#showAVCJiraReportByNoBugs').val(info.Bugs);
-                $('#showAVCJiraReportByNoLinks').val(info.Links);
-                $('#showAVCJiraReportByNo-1').modal('show');
-            }
-        });
-    });
-
-    $('#insert-showAVCReport-1').on('shown.bs.modal', function () {
+    $('#insert-showAVCQualityReport-1').on('shown.bs.modal', function () {
         let value = $("#selectDatabase option:selected").val();
-        if (value && value== "Jira统计"){
+        if (value && value== "AVC_Quality_Crash"){
             $('#insertIndex').val(value);
-            document.getElementById('Bugs_insert').style.display="";
-            document.getElementById('Links_insert').style.display="";
-            document.getElementById('Value_insert').style.display="None";
-            $('#insert-showAVCReport-1').modal('show');
-        }
-        if (value && value != "Jira统计"){
-            $('#insertIndex').val(value);
-            document.getElementById('Bugs_insert').style.display="None";
-            document.getElementById('Links_insert').style.display="None";
+            document.getElementById('Version_insert').style.display="";
             document.getElementById('Value_insert').style.display="";
-            $('#insert-showAVCReport-1').modal('show');
+            document.getElementById('Native_insert').style.display="None";
+            document.getElementById('RTM_insert').style.display="None";
+            document.getElementById('WebRTC_insert').style.display="None";
+            document.getElementById('Doc_insert').style.display="None";
+            document.getElementById('App_insert').style.display="None";
+            $('#insert-showAVCQualityReport-1').modal('show');
+        }
+        if (value && value != "AVC_Quality_Crash"){
+            $('#insertIndex').val(value);
+            document.getElementById('Version_insert').style.display="None";
+            document.getElementById('Value_insert').style.display="None";
+            document.getElementById('Native_insert').style.display="";
+            document.getElementById('RTM_insert').style.display="";
+            document.getElementById('WebRTC_insert').style.display="";
+            document.getElementById('Doc_insert').style.display="";
+            document.getElementById('App_insert').style.display="";
+            $('#insert-showAVCQualityReport-1').modal('show');
         }
         if (!value)
         {
             my_showTip("请选择一项需要更新的数据表");
-            $('#insert-showAVCReport-1').modal('hide');
+            $('#insert-showAVCQualityReport-1').modal('hide');
         }
     });
 
-    $('#modal-container-showAVCReport-1').on('hide.bs.modal', function () {
+    $('#modal-container-showAVCQualityReport-1').on('hide.bs.modal', function () {
         location.reload();
     });
 
-    function updateAVC() {
+    function updateAVCQuality() {
     var s = document.getElementById("selectDatabase");
-    var selectDatabase = s.options[s.selectedIndex].text;
-    var No = $("#showAVCReportByNoNo").val();
-    var Version = $("#showAVCReportByNoVersion").val();
-	var App = $("#showAVCReportByNoApp").val();
-	var Platform = $("#showAVCReportByNoPlatform").val();
-	var Scene = $("#showAVCReportByNoScene").val();
-	var Profile = $("#showAVCReportByNoProfile").val();
-	var Value = $("#showAVCReportByNoValue").val();
+    var selectDatabase = s.options[s.selectedIndex].value;
+
+    var No = $("#showAVCQualityReportByNoNo").val();
+    var Platform = $("#showAVCQualityReportByNoPlatform").val();
+    var Version = $("#showAVCQualityReportByNoVersion").val();
+	var Native = $("#showAVCQualityReportByNoNative").val();
+	var RTM = $("#showAVCQualityReportByNoRTM").val();
+	var WebRTC = $("#showAVCQualityReportByNoWebRTC").val();
+	var Doc = $("#showAVCQualityReportByNoDoc").val();
+	var App = $("#showAVCQualityReportByNoApp").val();
+	var Time = $("#showAVCQualityReportByNoTime").val();
+	var Value = $("#showAVCQualityReportByNoValue").val();
     $.ajax({
-        url:'/updateAVCInfoByNo',
+        url:'/updateAVCQualityInfoByNo',
         type:'post',
         dataType: 'json',
         data:{
             database:selectDatabase,
             No:No,
-            Version:Version,
-            App:App,
             Platform:Platform,
-            Scene:Scene,
-            Profile:Profile,
+            Version:Version,
+            Native:Native,
+            RTM:RTM,
+            WebRTC:WebRTC,
+            Doc:Doc,
+            App:App,
+            Time:Time,
             Value:Value
         },
         error:function(){
             alert('出现错误！');
         },success:function (data){
             if(data.status == 200){
-                $('#showAVCReportByNo-1').modal('hide');
+                $('#showAVCQualityReportByNo-1').modal('hide');
                 genTable();
                 {#location.reload();#}
             }else {
@@ -726,103 +712,59 @@
     })
 }
 
-    function updateAVCJira() {
-    var s = document.getElementById("selectDatabase");
-    var selectDatabase = s.options[s.selectedIndex].text;
-    var No = $("#showAVCJiraReportByNoNo").val();
-    var Version = $("#showAVCJiraReportByNoVersion").val();
-	var App = $("#showAVCJiraReportByNoApp").val();
-	var Platform = $("#showAVCJiraReportByNoPlatform").val();
-	var Scene = $("#showAVCJiraReportByNoScene").val();
-	var Profile = $("#showAVCJiraReportByNoProfile").val();
-	var Bugs = $("#showAVCJiraReportByNoBugs").val();
-	var Links = $("#showAVCJiraReportByNoLinks").val();
-    $.ajax({
-        url:'/updateAVCInfoByNo',
-        type:'post',
-        dataType: 'json',
-        data:{
-            database:selectDatabase,
-            No:No,
-            Version:Version,
-            App:App,
-            Platform:Platform,
-            Scene:Scene,
-            Profile:Profile,
-            Bugs:Bugs,
-            Links:Links
-        },
-        error:function(){
-            alert('出现错误！');
-        },success:function (data){
-            if(data.status == 200){
-                $('#showAVCJiraReportByNo-1').modal('hide');
-                genTable();
-                {#location.reload();#}
-            }else {
-                {#alert("无法更新配置信息！！！")#}
-                my_showTip(data.message);
-            }
-
-        }
-    })
-}
-
-    function insertAVC() {
-        var btn = $("#insertAVCButton");
+    function insertAVCQuality() {
+        var btn = $("#insertAVCQualityButton");
         btn.attr("disabled", true);  //按钮禁止点击
-    var s = document.getElementById("insertIndex");
-    var selectDatabase = s.value;
-	var Version = $("#insertAVCReportByNoVersion").val();
-	var App = $("#insertAVCReportByNoApp").val();
-	var Platform = $("#insertAVCReportByNoPlatform").val();
-	var Scene = $("#insertAVCReportByNoScene").val();
-	var Profile = $("#insertAVCReportByNoProfile").val();
-	var Value = $("#insertAVCReportByNoValue").val();
-	var Bugs = $("#insertAVCReportByNoBugs").val();
-	var Links = $("#insertAVCReportByNoLinks").val();
-    $.ajax({
-        url:'/insertAVCInfoByNo',
-        type:'post',
-        dataType: 'json',
-        data:{
-            database:selectDatabase,
-            Version:Version,
-            App:App,
-            Platform:Platform,
-            Scene:Scene,
-            Profile:Profile,
-            Value:Value,
-            Bugs:Bugs,
-            Links:Links
-        },
-        error:function(){
-            alert('出现错误！');
-        },success:function (data){
-            btn.attr("disabled", false);
-            if(data.status == 200){
-                $('#insert-showAVCReport-1').modal('hide');
-                genTable();
-            }else {
-                {#alert("无法更新配置信息！！！")#}
-                my_showTip(data.message);
-            }
+        var s = document.getElementById("insertIndex");
+        var selectDatabase = s.value;
 
-        }
-    })
-}
-
-    function deleteAVC() {
-        var s = document.getElementById("selectDatabase");
-        var selectDatabase = s.options[s.selectedIndex].text;
-        if(selectDatabase=="Jira统计"){
-           var No = $("#showAVCJiraReportByNoNo").val();
-        }
-        else {
-            var No = $("#showAVCReportByNoNo").val();
-        }
+        var Platform = $("#insertAVCQualityReportByNoPlatform").val();
+        var Version = $("#insertAVCQualityReportByNoVersion").val();
+        var Native = $("#insertAVCQualityReportByNoNative").val();
+        var RTM = $("#insertAVCQualityReportByNoRTM").val();
+        var WebRTC = $("#insertAVCQualityReportByNoWebRTC").val();
+        var Doc = $("#insertAVCQualityReportByNoDoc").val();
+        var App = $("#insertAVCQualityReportByNoApp").val();
+        var Time = $("#insertAVCQualityReportByNoTime").val();
+        var Value = $("#insertAVCQualityReportByNoValue").val();
         $.ajax({
-        url:'/deleteAVCInfoByNo',
+            url:'/insertAVCQualityInfoByNo',
+            type:'post',
+            dataType: 'json',
+            data:{
+                database:selectDatabase,
+                Platform:Platform,
+                Version:Version,
+                Native:Native,
+                RTM:RTM,
+                WebRTC:WebRTC,
+                Doc:Doc,
+                App:App,
+                Time:Time,
+                Value:Value
+            },
+            error:function(){
+                alert('出现错误！');
+            },success:function (data){
+                btn.attr("disabled", false);
+                if(data.status == 200){
+                    $('#insert-showAVCQualityReport-1').modal('hide');
+                    genTable();
+                }else {
+                    {#alert("无法更新配置信息！！！")#}
+                    my_showTip(data.message);
+                }
+
+            }
+        })
+    }
+
+    function deleteAVCQuality() {
+        var s = document.getElementById("selectDatabase");
+        var selectDatabase = s.options[s.selectedIndex].value;
+        var No = $("#showAVCQualityReportByNoNo").val();
+        $.ajax({
+        url:'/deleteAVCQualityInfoByNo',
         type:'post',
         dataType: 'json',
         data:{
@@ -833,8 +775,7 @@
             alert('出现错误！');
         },success:function (data){
             if(data.status == 200){
-                $('#showAVCReportByNo-1').modal('hide');
-                $('#showAVCJiraReportByNo-1').modal('hide');
+                $('#showAVCQualityReportByNo-1').modal('hide');
                 genTable();
                 {#location.reload();#}
             }else {

@@ -260,7 +260,7 @@ def deleteFile(filename):
         file = request.form.get('catename')
     if os.path.isfile(os.path.join('upload', file)):
         filefirstname = os.path.join(file_dir, file).split(".")[0]
-        print("要删除的文件：%s"% filefirstname)
+        # print("要删除的文件：%s"% filefirstname)
         sysstr = platform.system()
         if (sysstr == "Windows"):
             cmd = "del "+filefirstname+".*"
@@ -825,10 +825,63 @@ def showAVCQualityQearyResult():
     datas = {
         "data": new_data
     }
-    print(new_data)
     content = json.dumps(datas)
     resp = Response_headers(content)
     return resp
 
+@app.route('/getAVCQualityInfo',methods=['POST','GET'])
+def getAVCQualityInfo():
+    selectDatabase = request.form.get('selectDatabase')
+    data = getAVCQualityInfoSQL(selectDatabase)
+    return jsonify({'status': 200, 'data': data})
+
+@app.route ('/getAVCQualityInfoByNo',methods=['POST','GET'])
+def getAVCQualityInfoByNo():
+    No = request.form.get('No')
+    index = request.form.get('index')
+    data = getAVCQualityInfoByNoSQL(No,index)
+    return jsonify({'status': 200, 'data': data})
+
+
+@app.route ('/updateAVCQualityInfoByNo',methods=['POST','GET'])
+def updateAVCQualityInfoByNo():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = updateAVCQualityInfoByNoSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
+@app.route ('/insertAVCQualityInfoByNo',methods=['POST','GET'])
+def insertAVCQualityInfoByNo():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = insertAVCQualityInfoByNoSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
+
+@app.route ('/deleteAVCQualityInfoByNo',methods=['POST','GET'])
+def deleteAVCQualityInfoByNo():
+    username = session.get('username')
+    role = getRoleByNameSQL(username)
+    if role != "admin":
+        return jsonify({'status': 404, 'message': '没权限操作数据库，请联系QA！'})
+    else:
+        data = dict(request.form)
+        res = deleteAVCQualityInfoByNoSQL(data)
+        if res:
+            return jsonify({'status': 200, 'message': 'pass'})
+        else:
+            return jsonify({'status': 400, 'message': 'error'})
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8888)
